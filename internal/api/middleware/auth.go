@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/Rrens/text-to-sql/internal/api/response"
+	"github.com/Rrens/text-to-sql/internal/repository/redis"
+	"github.com/Rrens/text-to-sql/internal/security"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/rensmac/text-to-sql/internal/api/response"
-	"github.com/rensmac/text-to-sql/internal/repository/redis"
-	"github.com/rensmac/text-to-sql/internal/security"
 )
 
 type contextKey string
@@ -47,7 +47,7 @@ func (m *AuthMiddleware) Authenticate(next http.Handler) http.Handler {
 
 		claims, err := m.jwtManager.ValidateAccessToken(parts[1])
 		if err != nil {
-			response.Error(w, http.StatusUnauthorized, "invalid token")
+			response.Unauthorized(w, "invalid or expired token: "+err.Error())
 			return
 		}
 

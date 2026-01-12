@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Rrens/text-to-sql/internal/config"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/rensmac/text-to-sql/internal/config"
 )
 
 // DB wraps the database connection pool

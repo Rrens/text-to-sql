@@ -1,6 +1,6 @@
 server:
   host: 0.0.0.0
-  port: 8080
+  port: 8081
   read_timeout: 30s
   write_timeout: 30s
 
@@ -26,7 +26,7 @@ vault:
 
 auth:
   jwt_secret: your-super-secret-jwt-key-minimum-32-chars
-  access_token_ttl: 15m
+  access_token_ttl: 24h
   refresh_token_ttl: 168h
 
 llm:
@@ -43,6 +43,9 @@ llm:
   deepseek:
     api_key: ""
     model: deepseek-chat
+  gemini:
+    api_key: ""
+    model: gemini-1.5-flash
 
 security:
   read_only_default: true

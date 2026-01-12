@@ -9,7 +9,7 @@ Production-ready, multi-tenant Text-to-SQL API platform built with Go.
 
 - 🏢 **Multi-tenant**: Workspace-based isolation for multiple users
 - 🗄️ **Multi-database**: PostgreSQL, ClickHouse, MySQL support
-- 🤖 **Multi-LLM**: OpenAI, Anthropic, Ollama (local), DeepSeek
+- 🤖 **Multi-LLM**: OpenAI, Anthropic, Gemini, Ollama (local), DeepSeek
 - 🔒 **Secure**: Encrypted credentials, JWT auth, SQL validation
 - 🚀 **On-premises**: No cloud dependencies, self-hosted
 
@@ -24,7 +24,7 @@ Production-ready, multi-tenant Text-to-SQL API platform built with Go.
 ### 1. Clone & Setup
 
 ```bash
-git clone https://github.com/rensmac/text-to-sql.git
+git clone https://github.com/Rrens/text-to-sql.git
 cd text-to-sql
 make setup
 ```
@@ -140,6 +140,7 @@ curl -X POST http://localhost:8080/api/v1/workspaces/<workspace_id>/query \
 | GET    | `/ready`                                   | Readiness check      |
 
 See [docs/openapi.yaml](docs/openapi.yaml) for full API specification.
+A Postman collection is also available at [docs/postman_collection.json](docs/postman_collection.json) - import this file directly into Postman.
 
 ## Configuration
 
@@ -152,6 +153,7 @@ See [docs/openapi.yaml](docs/openapi.yaml) for full API specification.
 | `REDIS_PASSWORD`    | Redis password              | No       |
 | `OPENAI_API_KEY`    | OpenAI API key              | No       |
 | `ANTHROPIC_API_KEY` | Anthropic API key           | No       |
+| `GEMINI_API_KEY`    | Google Gemini API key       | No       |
 | `DEEPSEEK_API_KEY`  | DeepSeek API key            | No       |
 | `OLLAMA_HOST`       | Ollama server URL           | No       |
 
@@ -162,6 +164,7 @@ See [docs/openapi.yaml](docs/openapi.yaml) for full API specification.
 | **Ollama** | ✅    | No      | On-premises, privacy |
 | OpenAI     | ❌    | Yes     | Best quality         |
 | Anthropic  | ❌    | Yes     | Complex queries      |
+| Gemini     | ❌    | Yes     | Fast & multimodal    |
 | DeepSeek   | ❌    | Yes     | Code-focused         |
 
 ### Supported Databases

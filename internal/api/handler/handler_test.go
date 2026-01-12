@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rensmac/text-to-sql/internal/api/handler"
-	"github.com/rensmac/text-to-sql/internal/repository/postgres"
-	"github.com/rensmac/text-to-sql/internal/security"
-	"github.com/rensmac/text-to-sql/internal/service"
+	"github.com/Rrens/text-to-sql/internal/api/handler"
+	"github.com/Rrens/text-to-sql/internal/repository/postgres"
+	"github.com/Rrens/text-to-sql/internal/security"
+	"github.com/Rrens/text-to-sql/internal/service"
 )
 
 // MockDB implements a minimal mock for testing

@@ -3,9 +3,10 @@ package handler
 import (
 	"net/http"
 
-	"github.com/rensmac/text-to-sql/internal/api/response"
-	"github.com/rensmac/text-to-sql/internal/config"
-	"github.com/rensmac/text-to-sql/internal/repository/postgres"
+	"github.com/Rrens/text-to-sql/internal/api/response"
+	"github.com/Rrens/text-to-sql/internal/config"
+	"github.com/Rrens/text-to-sql/internal/repository/postgres"
+	"github.com/Rrens/text-to-sql/internal/repository/redis"
 )
 
 // HealthCheck returns a simple health check response
@@ -67,9 +68,33 @@ func ListLLMProviders(cfg *config.Config) http.HandlerFunc {
 			})
 		}
 
+		if cfg.LLM.Gemini.APIKey != "" {
+			providers = append(providers, map[string]any{
+				"name":    "gemini",
+				"models":  []string{"gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0-pro"},
+				"default": cfg.LLM.DefaultProvider == "gemini",
+			})
+		}
+
 		response.OK(w, map[string]any{
 			"providers":        providers,
 			"default_provider": cfg.LLM.DefaultProvider,
+		})
+	}
+}
+
+// FlushCache clears all schema cache from Redis
+func FlushCache(schemaCache *redis.SchemaCache) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		deleted, err := schemaCache.FlushAll(r.Context())
+		if err != nil {
+			response.Error(w, http.StatusInternalServerError, "failed to flush cache: "+err.Error())
+			return
+		}
+
+		response.OK(w, map[string]any{
+			"message":      "cache flushed successfully",
+			"keys_deleted": deleted,
 		})
 	}
 }

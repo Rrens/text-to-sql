@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Rrens/text-to-sql/internal/config"
 	"github.com/redis/go-redis/v9"
-	"github.com/rensmac/text-to-sql/internal/config"
 )
 
 // Client wraps the Redis client

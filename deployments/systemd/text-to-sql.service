@@ -1,6 +1,6 @@
 [Unit]
 Description=Text-to-SQL API Server
-Documentation=https://github.com/rensmac/text-to-sql
+Documentation=https://github.com/Rrens/text-to-sql
 After=network-online.target postgresql.service redis.service
 Wants=network-online.target
 

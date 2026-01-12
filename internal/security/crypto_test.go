@@ -3,7 +3,7 @@ package security_test
 import (
 	"testing"
 
-	"github.com/rensmac/text-to-sql/internal/security"
+	"github.com/Rrens/text-to-sql/internal/security"
 )
 
 func TestEncryptor_EncryptDecrypt(t *testing.T) {

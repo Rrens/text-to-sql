@@ -8,7 +8,7 @@ import (
 
 	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
-	"github.com/rensmac/text-to-sql/internal/mcp"
+	"github.com/Rrens/text-to-sql/internal/mcp"
 )
 
 // Adapter implements mcp.Adapter for ClickHouse

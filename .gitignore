@@ -33,7 +33,7 @@ Thumbs.db
 *.env
 
 # Config
-configs/config.local.yaml
+# configs/config.local.yaml
 configs/config.development.yaml
 
 # Logs

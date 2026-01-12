@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/Rrens/text-to-sql/internal/mcp"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/rensmac/text-to-sql/internal/mcp"
 )
 
 // Adapter implements mcp.Adapter for MySQL

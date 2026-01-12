@@ -3,7 +3,7 @@ package llm_test
 import (
 	"testing"
 
-	"github.com/rensmac/text-to-sql/internal/llm"
+	"github.com/Rrens/text-to-sql/internal/llm"
 )
 
 func TestBuildPrompt(t *testing.T) {

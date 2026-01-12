@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/rensmac/text-to-sql/internal/llm"
+	"github.com/Rrens/text-to-sql/internal/llm"
 )
 
 // Provider implements llm.Provider for DeepSeek

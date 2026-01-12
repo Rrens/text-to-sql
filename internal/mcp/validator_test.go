@@ -3,7 +3,7 @@ package mcp_test
 import (
 	"testing"
 
-	"github.com/rensmac/text-to-sql/internal/mcp"
+	"github.com/Rrens/text-to-sql/internal/mcp"
 )
 
 func TestValidateSQL(t *testing.T) {

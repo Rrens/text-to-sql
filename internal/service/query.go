@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Rrens/text-to-sql/internal/domain"
+	"github.com/Rrens/text-to-sql/internal/llm"
+	"github.com/Rrens/text-to-sql/internal/mcp"
+	"github.com/Rrens/text-to-sql/internal/repository/redis"
 	"github.com/google/uuid"
-	"github.com/rensmac/text-to-sql/internal/domain"
-	"github.com/rensmac/text-to-sql/internal/llm"
-	"github.com/rensmac/text-to-sql/internal/mcp"
-	"github.com/rensmac/text-to-sql/internal/repository/redis"
 )
 
 // QueryService handles text-to-SQL query operations

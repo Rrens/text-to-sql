@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/rensmac/text-to-sql/internal/llm"
+	"github.com/Rrens/text-to-sql/internal/llm"
 )
 
 // Provider implements llm.Provider for Ollama
@@ -88,7 +88,7 @@ func (p *Provider) GenerateSQL(ctx context.Context, req llm.Request, model strin
 		Stream: false,
 		Options: map[string]any{
 			"temperature": 0.0,
-			"num_predict": 2048,
+			"num_predict": 4096, // Increased for thinking models like Qwen
 		},
 	}
 

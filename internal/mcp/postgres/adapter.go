@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/Rrens/text-to-sql/internal/mcp"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/rensmac/text-to-sql/internal/mcp"
 )
 
 // Adapter implements mcp.Adapter for PostgreSQL

@@ -35,6 +35,9 @@ SQL:`, req.DatabaseType, req.SQLDialect, req.SchemaDDL, examplesStr, req.Questio
 
 // ExtractSQL extracts SQL from LLM response
 func ExtractSQL(content string) string {
+	// First, remove any <think>...</think> sections (used by Qwen and similar models)
+	content = removeThinkingTags(content)
+
 	// Try to extract from markdown code blocks
 	if sql := extractFromCodeBlock(content, "```sql", "```"); sql != "" {
 		return sql
@@ -43,8 +46,67 @@ func ExtractSQL(content string) string {
 		return sql
 	}
 
+	// Try to find SQL starting with SELECT
+	if sql := extractSelectStatement(content); sql != "" {
+		return sql
+	}
+
 	// Return trimmed content
 	return trimSQL(content)
+}
+
+// removeThinkingTags removes <think>...</think> sections from content
+func removeThinkingTags(content string) string {
+	for {
+		startIdx := indexOf(content, "<think>")
+		if startIdx == -1 {
+			break
+		}
+		endIdx := indexOf(content, "</think>")
+		if endIdx == -1 {
+			// If no closing tag, remove everything from <think> onwards
+			content = content[:startIdx]
+			break
+		}
+		// Remove the entire <think>...</think> block
+		content = content[:startIdx] + content[endIdx+len("</think>"):]
+	}
+	return trimWhitespace(content)
+}
+
+// extractSelectStatement finds and extracts a SELECT statement from content
+func extractSelectStatement(content string) string {
+	// Look for SELECT (case-insensitive)
+	upperContent := toUpper(content)
+	selectIdx := indexOf(upperContent, "SELECT")
+	if selectIdx == -1 {
+		return ""
+	}
+
+	// Extract from SELECT to the end or until we hit a stopping point
+	sql := content[selectIdx:]
+
+	// Find the end of the SQL (newline followed by non-SQL text, or end of string)
+	// Look for double newlines as statement end
+	endIdx := indexOf(sql, "\n\n")
+	if endIdx != -1 {
+		sql = sql[:endIdx]
+	}
+
+	return trimSQL(sql)
+}
+
+func toUpper(s string) string {
+	result := make([]byte, len(s))
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if c >= 'a' && c <= 'z' {
+			result[i] = c - 32
+		} else {
+			result[i] = c
+		}
+	}
+	return string(result)
 }
 
 func extractFromCodeBlock(content, startMarker, endMarker string) string {

@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/Rrens/text-to-sql/internal/security"
 	"github.com/google/uuid"
-	"github.com/rensmac/text-to-sql/internal/security"
 )
 
 func TestJWTManager_GenerateAndValidate(t *testing.T) {

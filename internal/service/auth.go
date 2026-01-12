@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Rrens/text-to-sql/internal/domain"
+	"github.com/Rrens/text-to-sql/internal/repository/postgres"
+	"github.com/Rrens/text-to-sql/internal/security"
 	"github.com/google/uuid"
-	"github.com/rensmac/text-to-sql/internal/domain"
-	"github.com/rensmac/text-to-sql/internal/repository/postgres"
-	"github.com/rensmac/text-to-sql/internal/security"
 	"golang.org/x/crypto/bcrypt"
 )
 

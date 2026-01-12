@@ -7,17 +7,44 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
-	"github.com/rensmac/text-to-sql/internal/api"
-	"github.com/rensmac/text-to-sql/internal/config"
-	"github.com/rensmac/text-to-sql/internal/repository/postgres"
-	"github.com/rensmac/text-to-sql/internal/repository/redis"
+	"github.com/Rrens/text-to-sql/internal/api"
+	"github.com/Rrens/text-to-sql/internal/config"
+	"github.com/Rrens/text-to-sql/internal/repository/postgres"
+	"github.com/Rrens/text-to-sql/internal/repository/redis"
+	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
 func main() {
+	// Load .env file - try multiple locations
+	envPaths := []string{".env", "../.env", "../../.env"}
+	envLoaded := false
+	for _, p := range envPaths {
+		if err := godotenv.Load(p); err == nil {
+			fmt.Printf("Loaded .env from: %s\n", p)
+			envLoaded = true
+			break
+		}
+	}
+	if !envLoaded {
+		fmt.Println("Warning: .env file not found in any standard location")
+	}
+
+	// Debug: print key env vars to verify loading
+	geminiKey := os.Getenv("GEMINI_API_KEY")
+	keyPreview := ""
+	if len(geminiKey) >= 10 {
+		keyPreview = geminiKey[:10]
+	}
+	fmt.Printf("DEBUG ENV: SERVER_PORT=%s, POSTGRES_HOST=%s, GEMINI_API_KEY=%s..., OLLAMA_HOST=%s\n",
+		os.Getenv("SERVER_PORT"),
+		os.Getenv("POSTGRES_HOST"),
+		keyPreview,
+		os.Getenv("OLLAMA_HOST"),
+	)
+
 	// Setup logger
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	if os.Getenv("ENV") != "production" {
@@ -58,7 +85,7 @@ func main() {
 		Handler:      router,
 		ReadTimeout:  cfg.Server.ReadTimeout,
 		WriteTimeout: cfg.Server.WriteTimeout,
-		IdleTimeout:  120 * time.Second,
+		IdleTimeout:  cfg.Server.IdleTimeout,
 	}
 
 	// Start server in goroutine
@@ -77,7 +104,7 @@ func main() {
 	log.Info().Msg("Shutting down server...")
 
 	// Graceful shutdown with timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.Server.ShutdownTimeout)
 	defer cancel()
 
 	if err := server.Shutdown(ctx); err != nil {

@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Rrens/text-to-sql/internal/domain"
+	"github.com/Rrens/text-to-sql/internal/repository/postgres"
 	"github.com/google/uuid"
-	"github.com/rensmac/text-to-sql/internal/domain"
-	"github.com/rensmac/text-to-sql/internal/repository/postgres"
 )
 
 // WorkspaceService handles workspace operations

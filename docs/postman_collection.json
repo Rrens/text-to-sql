@@ -1,0 +1,2250 @@
+{
+    "item": [
+        {
+            "name": "health",
+            "description": "",
+            "item": [
+                {
+                    "id": "d7cb6c0b-d29b-429b-9ec8-4a35a392c7a9",
+                    "name": "Health check",
+                    "request": {
+                        "name": "Health check",
+                        "description": {},
+                        "url": {
+                            "path": [
+                                "health"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "method": "GET",
+                        "body": {},
+                        "auth": null
+                    },
+                    "response": [
+                        {
+                            "id": "5eee9bb7-e905-4e11-9f04-62d28801d258",
+                            "name": "Service is healthy",
+                            "originalRequest": {
+                                "url": {
+                                    "path": [
+                                        "health"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "method": "GET",
+                                "body": {}
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"status\": \"<string>\"\n  }\n}",
+                            "cookie": [],
+                            "_postman_previewlanguage": "json"
+                        }
+                    ],
+                    "event": [],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    }
+                }
+            ]
+        },
+        {
+            "name": "ready",
+            "description": "",
+            "item": [
+                {
+                    "id": "b43d31e8-b11b-42c9-a389-5baa7d52bf93",
+                    "name": "Readiness check",
+                    "request": {
+                        "name": "Readiness check",
+                        "description": {},
+                        "url": {
+                            "path": [
+                                "ready"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        },
+                        "method": "GET",
+                        "body": {},
+                        "auth": null
+                    },
+                    "response": [
+                        {
+                            "id": "1d947d83-c4f3-4c7e-9354-150a6e9d77f0",
+                            "name": "Service is ready",
+                            "originalRequest": {
+                                "url": {
+                                    "path": [
+                                        "ready"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "method": "GET",
+                                "body": {}
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [],
+                            "cookie": [],
+                            "_postman_previewlanguage": "text"
+                        },
+                        {
+                            "id": "8fe967c6-fbcf-4a4b-98d1-d01916910b61",
+                            "name": "Service not ready",
+                            "originalRequest": {
+                                "url": {
+                                    "path": [
+                                        "ready"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "method": "GET",
+                                "body": {}
+                            },
+                            "status": "Service Unavailable",
+                            "code": 503,
+                            "header": [],
+                            "cookie": [],
+                            "_postman_previewlanguage": "text"
+                        }
+                    ],
+                    "event": [],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    }
+                }
+            ]
+        },
+        {
+            "name": "auth",
+            "description": "",
+            "item": [
+                {
+                    "name": "register",
+                    "description": "",
+                    "item": [
+                        {
+                            "id": "444d26c4-1821-43e0-8497-76b242c97777",
+                            "name": "Register new user",
+                            "request": {
+                                "name": "Register new user",
+                                "description": {},
+                                "url": {
+                                    "path": [
+                                        "auth",
+                                        "register"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "method": "POST",
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"email\": \"<email>\",\n  \"password\": \"<string>\"\n}",
+                                    "options": {
+                                        "raw": {
+                                            "headerFamily": "json",
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "auth": null
+                            },
+                            "response": [
+                                {
+                                    "id": "c752bf62-682c-41ef-9193-2debb7ec9c18",
+                                    "name": "User registered",
+                                    "originalRequest": {
+                                        "url": {
+                                            "path": [
+                                                "auth",
+                                                "register"
+                                            ],
+                                            "host": [
+                                                "{{baseUrl}}"
+                                            ],
+                                            "query": [],
+                                            "variable": []
+                                        },
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\n  \"email\": \"<email>\",\n  \"password\": \"<string>\"\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "headerFamily": "json",
+                                                    "language": "json"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "status": "Created",
+                                    "code": 201,
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                        }
+                                    ],
+                                    "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"email\": \"<string>\"\n  }\n}",
+                                    "cookie": [],
+                                    "_postman_previewlanguage": "json"
+                                },
+                                {
+                                    "id": "ed69a3fb-d2ed-498e-b7b2-4c61709dd3dc",
+                                    "name": "Invalid request",
+                                    "originalRequest": {
+                                        "url": {
+                                            "path": [
+                                                "auth",
+                                                "register"
+                                            ],
+                                            "host": [
+                                                "{{baseUrl}}"
+                                            ],
+                                            "query": [],
+                                            "variable": []
+                                        },
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\n  \"email\": \"<email>\",\n  \"password\": \"<string>\"\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "headerFamily": "json",
+                                                    "language": "json"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "status": "Bad Request",
+                                    "code": 400,
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                        }
+                                    ],
+                                    "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                                    "cookie": [],
+                                    "_postman_previewlanguage": "json"
+                                }
+                            ],
+                            "event": [],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "login",
+                    "description": "",
+                    "item": [
+                        {
+                            "id": "923d9ab8-4b51-4338-85d2-fe0332730678",
+                            "name": "Login user",
+                            "request": {
+                                "name": "Login user",
+                                "description": {},
+                                "url": {
+                                    "path": [
+                                        "auth",
+                                        "login"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "method": "POST",
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"email\": \"<email>\",\n  \"password\": \"<string>\"\n}",
+                                    "options": {
+                                        "raw": {
+                                            "headerFamily": "json",
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "auth": null
+                            },
+                            "response": [
+                                {
+                                    "id": "3bc1e702-2b39-4b63-848f-868ce0508ebc",
+                                    "name": "Login successful",
+                                    "originalRequest": {
+                                        "url": {
+                                            "path": [
+                                                "auth",
+                                                "login"
+                                            ],
+                                            "host": [
+                                                "{{baseUrl}}"
+                                            ],
+                                            "query": [],
+                                            "variable": []
+                                        },
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\n  \"email\": \"<email>\",\n  \"password\": \"<string>\"\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "headerFamily": "json",
+                                                    "language": "json"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "status": "OK",
+                                    "code": 200,
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                        }
+                                    ],
+                                    "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"access_token\": \"<string>\",\n    \"refresh_token\": \"<string>\",\n    \"expires_in\": \"<integer>\"\n  }\n}",
+                                    "cookie": [],
+                                    "_postman_previewlanguage": "json"
+                                },
+                                {
+                                    "id": "c0c66ccb-710e-43ed-bba0-0f2b32b3bc73",
+                                    "name": "Invalid credentials",
+                                    "originalRequest": {
+                                        "url": {
+                                            "path": [
+                                                "auth",
+                                                "login"
+                                            ],
+                                            "host": [
+                                                "{{baseUrl}}"
+                                            ],
+                                            "query": [],
+                                            "variable": []
+                                        },
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\n  \"email\": \"<email>\",\n  \"password\": \"<string>\"\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "headerFamily": "json",
+                                                    "language": "json"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "status": "Unauthorized",
+                                    "code": 401,
+                                    "header": [],
+                                    "cookie": [],
+                                    "_postman_previewlanguage": "text"
+                                }
+                            ],
+                            "event": [],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "refresh",
+                    "description": "",
+                    "item": [
+                        {
+                            "id": "db3a4d3f-40f4-4ab9-afaa-7d5892d6e6e5",
+                            "name": "Refresh access token",
+                            "request": {
+                                "name": "Refresh access token",
+                                "description": {},
+                                "url": {
+                                    "path": [
+                                        "auth",
+                                        "refresh"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "method": "POST",
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"refresh_token\": \"<string>\"\n}",
+                                    "options": {
+                                        "raw": {
+                                            "headerFamily": "json",
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "auth": null
+                            },
+                            "response": [
+                                {
+                                    "id": "24a225f9-14c1-40a2-8d99-93fb4930e7fc",
+                                    "name": "Token refreshed",
+                                    "originalRequest": {
+                                        "url": {
+                                            "path": [
+                                                "auth",
+                                                "refresh"
+                                            ],
+                                            "host": [
+                                                "{{baseUrl}}"
+                                            ],
+                                            "query": [],
+                                            "variable": []
+                                        },
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\n  \"refresh_token\": \"<string>\"\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "headerFamily": "json",
+                                                    "language": "json"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "status": "OK",
+                                    "code": 200,
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                        }
+                                    ],
+                                    "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"access_token\": \"<string>\",\n    \"refresh_token\": \"<string>\",\n    \"expires_in\": \"<integer>\"\n  }\n}",
+                                    "cookie": [],
+                                    "_postman_previewlanguage": "json"
+                                },
+                                {
+                                    "id": "41b11dd5-2c6d-4299-add7-39c23b393d35",
+                                    "name": "Invalid refresh token",
+                                    "originalRequest": {
+                                        "url": {
+                                            "path": [
+                                                "auth",
+                                                "refresh"
+                                            ],
+                                            "host": [
+                                                "{{baseUrl}}"
+                                            ],
+                                            "query": [],
+                                            "variable": []
+                                        },
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\n  \"refresh_token\": \"<string>\"\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "headerFamily": "json",
+                                                    "language": "json"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "status": "Unauthorized",
+                                    "code": 401,
+                                    "header": [],
+                                    "cookie": [],
+                                    "_postman_previewlanguage": "text"
+                                }
+                            ],
+                            "event": [],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "workspaces",
+            "description": "",
+            "item": [
+                {
+                    "id": "80b9c66c-b35c-4a29-b593-a2ad664bd7a3",
+                    "name": "List user workspaces",
+                    "request": {
+                        "name": "List user workspaces",
+                        "description": {},
+                        "url": {
+                            "path": [
+                                "workspaces"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "method": "GET",
+                        "body": {},
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{bearerToken}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "id": "b887cb72-3e33-44de-ae03-1e4589266c94",
+                            "name": "List of workspaces",
+                            "originalRequest": {
+                                "url": {
+                                    "path": [
+                                        "workspaces"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "description": {
+                                            "content": "Added as a part of security scheme: bearer",
+                                            "type": "text/plain"
+                                        },
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                    }
+                                ],
+                                "method": "GET",
+                                "body": {}
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": [\n    {\n      \"id\": \"<uuid>\",\n      \"name\": \"<string>\",\n      \"settings\": {},\n      \"created_at\": \"<dateTime>\"\n    },\n    {\n      \"id\": \"<uuid>\",\n      \"name\": \"<string>\",\n      \"settings\": {},\n      \"created_at\": \"<dateTime>\"\n    }\n  ]\n}",
+                            "cookie": [],
+                            "_postman_previewlanguage": "json"
+                        }
+                    ],
+                    "event": [],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    }
+                },
+                {
+                    "id": "1aa75fb4-6321-4bd5-a711-31001d53a1d9",
+                    "name": "Create workspace",
+                    "request": {
+                        "name": "Create workspace",
+                        "description": {},
+                        "url": {
+                            "path": [
+                                "workspaces"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        },
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "method": "POST",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"<string>\",\n  \"settings\": {}\n}",
+                            "options": {
+                                "raw": {
+                                    "headerFamily": "json",
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{bearerToken}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "id": "74f70c19-fc5e-49e6-ae48-2ff3cc22cb77",
+                            "name": "Workspace created",
+                            "originalRequest": {
+                                "url": {
+                                    "path": [
+                                        "workspaces"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "description": {
+                                            "content": "Added as a part of security scheme: bearer",
+                                            "type": "text/plain"
+                                        },
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                    }
+                                ],
+                                "method": "POST",
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"<string>\",\n  \"settings\": {}\n}",
+                                    "options": {
+                                        "raw": {
+                                            "headerFamily": "json",
+                                            "language": "json"
+                                        }
+                                    }
+                                }
+                            },
+                            "status": "Created",
+                            "code": 201,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"name\": \"<string>\",\n    \"settings\": {},\n    \"created_at\": \"<dateTime>\"\n  }\n}",
+                            "cookie": [],
+                            "_postman_previewlanguage": "json"
+                        }
+                    ],
+                    "event": [],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    }
+                },
+                {
+                    "name": "{workspaceId}",
+                    "description": "",
+                    "item": [
+                        {
+                            "id": "6df7aef9-e4b0-42c8-9137-82ddfc2017a2",
+                            "name": "Get workspace",
+                            "request": {
+                                "name": "Get workspace",
+                                "description": {},
+                                "url": {
+                                    "path": [
+                                        "workspaces",
+                                        ":workspaceId"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": [
+                                        {
+                                            "type": "any",
+                                            "value": "<uuid>",
+                                            "key": "workspaceId",
+                                            "disabled": false,
+                                            "description": {
+                                                "content": "(Required) ",
+                                                "type": "text/plain"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "method": "GET",
+                                "body": {},
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{bearerToken}}"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": [
+                                {
+                                    "id": "a48e2781-29fe-4d01-aaf7-4ae34ee72674",
+                                    "name": "Workspace details",
+                                    "originalRequest": {
+                                        "url": {
+                                            "path": [
+                                                "workspaces",
+                                                ":workspaceId"
+                                            ],
+                                            "host": [
+                                                "{{baseUrl}}"
+                                            ],
+                                            "query": [],
+                                            "variable": [
+                                                {
+                                                    "disabled": false,
+                                                    "description": {
+                                                        "content": "(Required) ",
+                                                        "type": "text/plain"
+                                                    },
+                                                    "type": "any",
+                                                    "value": "<uuid>",
+                                                    "key": "workspaceId"
+                                                }
+                                            ]
+                                        },
+                                        "header": [
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json"
+                                            },
+                                            {
+                                                "description": {
+                                                    "content": "Added as a part of security scheme: bearer",
+                                                    "type": "text/plain"
+                                                },
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                            }
+                                        ],
+                                        "method": "GET",
+                                        "body": {}
+                                    },
+                                    "status": "OK",
+                                    "code": 200,
+                                    "header": [
+                                        {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                        }
+                                    ],
+                                    "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"name\": \"<string>\",\n    \"settings\": {},\n    \"created_at\": \"<dateTime>\"\n  }\n}",
+                                    "cookie": [],
+                                    "_postman_previewlanguage": "json"
+                                }
+                            ],
+                            "event": [],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            }
+                        },
+                        {
+                            "id": "74d5752b-1b2c-4a6b-8f9a-a3788ec6034c",
+                            "name": "Update workspace",
+                            "request": {
+                                "name": "Update workspace",
+                                "description": {},
+                                "url": {
+                                    "path": [
+                                        "workspaces",
+                                        ":workspaceId"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": [
+                                        {
+                                            "type": "any",
+                                            "value": "<uuid>",
+                                            "key": "workspaceId",
+                                            "disabled": false,
+                                            "description": {
+                                                "content": "(Required) ",
+                                                "type": "text/plain"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "method": "PATCH",
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"<string>\",\n  \"settings\": {}\n}",
+                                    "options": {
+                                        "raw": {
+                                            "headerFamily": "json",
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{bearerToken}}"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": [
+                                {
+                                    "id": "3b777310-4f33-4fb3-973f-05b7cc8faf93",
+                                    "name": "Workspace updated",
+                                    "originalRequest": {
+                                        "url": {
+                                            "path": [
+                                                "workspaces",
+                                                ":workspaceId"
+                                            ],
+                                            "host": [
+                                                "{{baseUrl}}"
+                                            ],
+                                            "query": [],
+                                            "variable": [
+                                                {
+                                                    "disabled": false,
+                                                    "description": {
+                                                        "content": "(Required) ",
+                                                        "type": "text/plain"
+                                                    },
+                                                    "type": "any",
+                                                    "value": "<uuid>",
+                                                    "key": "workspaceId"
+                                                }
+                                            ]
+                                        },
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                            },
+                                            {
+                                                "description": {
+                                                    "content": "Added as a part of security scheme: bearer",
+                                                    "type": "text/plain"
+                                                },
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                            }
+                                        ],
+                                        "method": "PATCH",
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\n  \"name\": \"<string>\",\n  \"settings\": {}\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "headerFamily": "json",
+                                                    "language": "json"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "status": "OK",
+                                    "code": 200,
+                                    "header": [],
+                                    "cookie": [],
+                                    "_postman_previewlanguage": "text"
+                                }
+                            ],
+                            "event": [],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            }
+                        },
+                        {
+                            "id": "52506c2c-0852-4025-93ba-431fcffa5225",
+                            "name": "Delete workspace",
+                            "request": {
+                                "name": "Delete workspace",
+                                "description": {},
+                                "url": {
+                                    "path": [
+                                        "workspaces",
+                                        ":workspaceId"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": [
+                                        {
+                                            "type": "any",
+                                            "value": "<uuid>",
+                                            "key": "workspaceId",
+                                            "disabled": false,
+                                            "description": {
+                                                "content": "(Required) ",
+                                                "type": "text/plain"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "method": "DELETE",
+                                "body": {},
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{bearerToken}}"
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": [
+                                {
+                                    "id": "7f86f052-0122-4538-b22c-effe423802ef",
+                                    "name": "Workspace deleted",
+                                    "originalRequest": {
+                                        "url": {
+                                            "path": [
+                                                "workspaces",
+                                                ":workspaceId"
+                                            ],
+                                            "host": [
+                                                "{{baseUrl}}"
+                                            ],
+                                            "query": [],
+                                            "variable": [
+                                                {
+                                                    "disabled": false,
+                                                    "description": {
+                                                        "content": "(Required) ",
+                                                        "type": "text/plain"
+                                                    },
+                                                    "type": "any",
+                                                    "value": "<uuid>",
+                                                    "key": "workspaceId"
+                                                }
+                                            ]
+                                        },
+                                        "header": [
+                                            {
+                                                "description": {
+                                                    "content": "Added as a part of security scheme: bearer",
+                                                    "type": "text/plain"
+                                                },
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                            }
+                                        ],
+                                        "method": "DELETE",
+                                        "body": {}
+                                    },
+                                    "status": "No Content",
+                                    "code": 204,
+                                    "header": [],
+                                    "cookie": [],
+                                    "_postman_previewlanguage": "text"
+                                }
+                            ],
+                            "event": [],
+                            "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                            }
+                        },
+                        {
+                            "name": "connections",
+                            "description": "",
+                            "item": [
+                                {
+                                    "id": "26603edf-89e3-4e96-a12f-b414586049b1",
+                                    "name": "List connections",
+                                    "request": {
+                                        "name": "List connections",
+                                        "description": {},
+                                        "url": {
+                                            "path": [
+                                                "workspaces",
+                                                ":workspaceId",
+                                                "connections"
+                                            ],
+                                            "host": [
+                                                "{{baseUrl}}"
+                                            ],
+                                            "query": [],
+                                            "variable": [
+                                                {
+                                                    "type": "any",
+                                                    "value": "<uuid>",
+                                                    "key": "workspaceId",
+                                                    "disabled": false,
+                                                    "description": {
+                                                        "content": "(Required) ",
+                                                        "type": "text/plain"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "header": [
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json"
+                                            }
+                                        ],
+                                        "method": "GET",
+                                        "body": {},
+                                        "auth": {
+                                            "type": "bearer",
+                                            "bearer": [
+                                                {
+                                                    "key": "token",
+                                                    "value": "{{bearerToken}}"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": [
+                                        {
+                                            "id": "a1ef8359-fd0b-4c1b-9128-cb0506778519",
+                                            "name": "List of connections",
+                                            "originalRequest": {
+                                                "url": {
+                                                    "path": [
+                                                        "workspaces",
+                                                        ":workspaceId",
+                                                        "connections"
+                                                    ],
+                                                    "host": [
+                                                        "{{baseUrl}}"
+                                                    ],
+                                                    "query": [],
+                                                    "variable": [
+                                                        {
+                                                            "disabled": false,
+                                                            "description": {
+                                                                "content": "(Required) ",
+                                                                "type": "text/plain"
+                                                            },
+                                                            "type": "any",
+                                                            "value": "<uuid>",
+                                                            "key": "workspaceId"
+                                                        }
+                                                    ]
+                                                },
+                                                "header": [
+                                                    {
+                                                        "key": "Accept",
+                                                        "value": "application/json"
+                                                    },
+                                                    {
+                                                        "description": {
+                                                            "content": "Added as a part of security scheme: bearer",
+                                                            "type": "text/plain"
+                                                        },
+                                                        "key": "Authorization",
+                                                        "value": "Bearer <token>"
+                                                    }
+                                                ],
+                                                "method": "GET",
+                                                "body": {}
+                                            },
+                                            "status": "OK",
+                                            "code": 200,
+                                            "header": [
+                                                {
+                                                    "key": "Content-Type",
+                                                    "value": "application/json"
+                                                }
+                                            ],
+                                            "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": [\n    {\n      \"id\": \"<uuid>\",\n      \"name\": \"<string>\",\n      \"database_type\": \"clickhouse\",\n      \"host\": \"<string>\",\n      \"port\": \"<integer>\",\n      \"database\": \"<string>\",\n      \"username\": \"<string>\",\n      \"ssl_mode\": \"<string>\",\n      \"read_only\": \"<boolean>\",\n      \"max_rows\": \"<integer>\"\n    },\n    {\n      \"id\": \"<uuid>\",\n      \"name\": \"<string>\",\n      \"database_type\": \"postgres\",\n      \"host\": \"<string>\",\n      \"port\": \"<integer>\",\n      \"database\": \"<string>\",\n      \"username\": \"<string>\",\n      \"ssl_mode\": \"<string>\",\n      \"read_only\": \"<boolean>\",\n      \"max_rows\": \"<integer>\"\n    }\n  ]\n}",
+                                            "cookie": [],
+                                            "_postman_previewlanguage": "json"
+                                        }
+                                    ],
+                                    "event": [],
+                                    "protocolProfileBehavior": {
+                                        "disableBodyPruning": true
+                                    }
+                                },
+                                {
+                                    "id": "57df9499-3b55-4074-9bd2-a5d160016ddb",
+                                    "name": "Create connection",
+                                    "request": {
+                                        "name": "Create connection",
+                                        "description": {},
+                                        "url": {
+                                            "path": [
+                                                "workspaces",
+                                                ":workspaceId",
+                                                "connections"
+                                            ],
+                                            "host": [
+                                                "{{baseUrl}}"
+                                            ],
+                                            "query": [],
+                                            "variable": [
+                                                {
+                                                    "type": "any",
+                                                    "value": "<uuid>",
+                                                    "key": "workspaceId",
+                                                    "disabled": false,
+                                                    "description": {
+                                                        "content": "(Required) ",
+                                                        "type": "text/plain"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\n  \"name\": \"<string>\",\n  \"database_type\": \"clickhouse\",\n  \"host\": \"<string>\",\n  \"port\": \"<integer>\",\n  \"database\": \"<string>\",\n  \"username\": \"<string>\",\n  \"password\": \"<string>\",\n  \"ssl_mode\": \"disable\",\n  \"read_only\": true,\n  \"max_rows\": 1000,\n  \"timeout_seconds\": 30\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "headerFamily": "json",
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "auth": {
+                                            "type": "bearer",
+                                            "bearer": [
+                                                {
+                                                    "key": "token",
+                                                    "value": "{{bearerToken}}"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": [
+                                        {
+                                            "id": "b237ca95-7c6e-4ed7-9abd-198ffa127626",
+                                            "name": "Connection created",
+                                            "originalRequest": {
+                                                "url": {
+                                                    "path": [
+                                                        "workspaces",
+                                                        ":workspaceId",
+                                                        "connections"
+                                                    ],
+                                                    "host": [
+                                                        "{{baseUrl}}"
+                                                    ],
+                                                    "query": [],
+                                                    "variable": [
+                                                        {
+                                                            "disabled": false,
+                                                            "description": {
+                                                                "content": "(Required) ",
+                                                                "type": "text/plain"
+                                                            },
+                                                            "type": "any",
+                                                            "value": "<uuid>",
+                                                            "key": "workspaceId"
+                                                        }
+                                                    ]
+                                                },
+                                                "header": [
+                                                    {
+                                                        "key": "Content-Type",
+                                                        "value": "application/json"
+                                                    },
+                                                    {
+                                                        "description": {
+                                                            "content": "Added as a part of security scheme: bearer",
+                                                            "type": "text/plain"
+                                                        },
+                                                        "key": "Authorization",
+                                                        "value": "Bearer <token>"
+                                                    }
+                                                ],
+                                                "method": "POST",
+                                                "body": {
+                                                    "mode": "raw",
+                                                    "raw": "{\n  \"name\": \"<string>\",\n  \"database_type\": \"clickhouse\",\n  \"host\": \"<string>\",\n  \"port\": \"<integer>\",\n  \"database\": \"<string>\",\n  \"username\": \"<string>\",\n  \"password\": \"<string>\",\n  \"ssl_mode\": \"disable\",\n  \"read_only\": true,\n  \"max_rows\": 1000,\n  \"timeout_seconds\": 30\n}",
+                                                    "options": {
+                                                        "raw": {
+                                                            "headerFamily": "json",
+                                                            "language": "json"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "status": "Created",
+                                            "code": 201,
+                                            "header": [],
+                                            "cookie": [],
+                                            "_postman_previewlanguage": "text"
+                                        }
+                                    ],
+                                    "event": [],
+                                    "protocolProfileBehavior": {
+                                        "disableBodyPruning": true
+                                    }
+                                },
+                                {
+                                    "name": "{connectionId}",
+                                    "description": "",
+                                    "item": [
+                                        {
+                                            "id": "128e4dcb-a0c3-4a85-b690-c24418bb9324",
+                                            "name": "Get connection",
+                                            "request": {
+                                                "name": "Get connection",
+                                                "description": {},
+                                                "url": {
+                                                    "path": [
+                                                        "workspaces",
+                                                        ":workspaceId",
+                                                        "connections",
+                                                        ":connectionId"
+                                                    ],
+                                                    "host": [
+                                                        "{{baseUrl}}"
+                                                    ],
+                                                    "query": [],
+                                                    "variable": [
+                                                        {
+                                                            "type": "any",
+                                                            "value": "<uuid>",
+                                                            "key": "workspaceId",
+                                                            "disabled": false,
+                                                            "description": {
+                                                                "content": "(Required) ",
+                                                                "type": "text/plain"
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "any",
+                                                            "value": "<uuid>",
+                                                            "key": "connectionId",
+                                                            "disabled": false,
+                                                            "description": {
+                                                                "content": "(Required) ",
+                                                                "type": "text/plain"
+                                                            }
+                                                        }
+                                                    ]
+                                                },
+                                                "method": "GET",
+                                                "body": {},
+                                                "auth": {
+                                                    "type": "bearer",
+                                                    "bearer": [
+                                                        {
+                                                            "key": "token",
+                                                            "value": "{{bearerToken}}"
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            "response": [
+                                                {
+                                                    "id": "58b1420d-e549-46ec-bf23-eefbc075da21",
+                                                    "name": "Connection details",
+                                                    "originalRequest": {
+                                                        "url": {
+                                                            "path": [
+                                                                "workspaces",
+                                                                ":workspaceId",
+                                                                "connections",
+                                                                ":connectionId"
+                                                            ],
+                                                            "host": [
+                                                                "{{baseUrl}}"
+                                                            ],
+                                                            "query": [],
+                                                            "variable": [
+                                                                {
+                                                                    "disabled": false,
+                                                                    "description": {
+                                                                        "content": "(Required) ",
+                                                                        "type": "text/plain"
+                                                                    },
+                                                                    "type": "any",
+                                                                    "value": "<uuid>",
+                                                                    "key": "workspaceId"
+                                                                },
+                                                                {
+                                                                    "disabled": false,
+                                                                    "description": {
+                                                                        "content": "(Required) ",
+                                                                        "type": "text/plain"
+                                                                    },
+                                                                    "type": "any",
+                                                                    "value": "<uuid>",
+                                                                    "key": "connectionId"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "header": [
+                                                            {
+                                                                "description": {
+                                                                    "content": "Added as a part of security scheme: bearer",
+                                                                    "type": "text/plain"
+                                                                },
+                                                                "key": "Authorization",
+                                                                "value": "Bearer <token>"
+                                                            }
+                                                        ],
+                                                        "method": "GET",
+                                                        "body": {}
+                                                    },
+                                                    "status": "OK",
+                                                    "code": 200,
+                                                    "header": [],
+                                                    "cookie": [],
+                                                    "_postman_previewlanguage": "text"
+                                                }
+                                            ],
+                                            "event": [],
+                                            "protocolProfileBehavior": {
+                                                "disableBodyPruning": true
+                                            }
+                                        },
+                                        {
+                                            "id": "ff98f797-4288-496b-a584-ee6785a64314",
+                                            "name": "Update connection",
+                                            "request": {
+                                                "name": "Update connection",
+                                                "description": {},
+                                                "url": {
+                                                    "path": [
+                                                        "workspaces",
+                                                        ":workspaceId",
+                                                        "connections",
+                                                        ":connectionId"
+                                                    ],
+                                                    "host": [
+                                                        "{{baseUrl}}"
+                                                    ],
+                                                    "query": [],
+                                                    "variable": [
+                                                        {
+                                                            "type": "any",
+                                                            "value": "<uuid>",
+                                                            "key": "workspaceId",
+                                                            "disabled": false,
+                                                            "description": {
+                                                                "content": "(Required) ",
+                                                                "type": "text/plain"
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "any",
+                                                            "value": "<uuid>",
+                                                            "key": "connectionId",
+                                                            "disabled": false,
+                                                            "description": {
+                                                                "content": "(Required) ",
+                                                                "type": "text/plain"
+                                                            }
+                                                        }
+                                                    ]
+                                                },
+                                                "method": "PATCH",
+                                                "body": {},
+                                                "auth": {
+                                                    "type": "bearer",
+                                                    "bearer": [
+                                                        {
+                                                            "key": "token",
+                                                            "value": "{{bearerToken}}"
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            "response": [
+                                                {
+                                                    "id": "14669a29-db22-4348-8345-e455522ab305",
+                                                    "name": "Connection updated",
+                                                    "originalRequest": {
+                                                        "url": {
+                                                            "path": [
+                                                                "workspaces",
+                                                                ":workspaceId",
+                                                                "connections",
+                                                                ":connectionId"
+                                                            ],
+                                                            "host": [
+                                                                "{{baseUrl}}"
+                                                            ],
+                                                            "query": [],
+                                                            "variable": [
+                                                                {
+                                                                    "disabled": false,
+                                                                    "description": {
+                                                                        "content": "(Required) ",
+                                                                        "type": "text/plain"
+                                                                    },
+                                                                    "type": "any",
+                                                                    "value": "<uuid>",
+                                                                    "key": "workspaceId"
+                                                                },
+                                                                {
+                                                                    "disabled": false,
+                                                                    "description": {
+                                                                        "content": "(Required) ",
+                                                                        "type": "text/plain"
+                                                                    },
+                                                                    "type": "any",
+                                                                    "value": "<uuid>",
+                                                                    "key": "connectionId"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "header": [
+                                                            {
+                                                                "description": {
+                                                                    "content": "Added as a part of security scheme: bearer",
+                                                                    "type": "text/plain"
+                                                                },
+                                                                "key": "Authorization",
+                                                                "value": "Bearer <token>"
+                                                            }
+                                                        ],
+                                                        "method": "PATCH",
+                                                        "body": {}
+                                                    },
+                                                    "status": "OK",
+                                                    "code": 200,
+                                                    "header": [],
+                                                    "cookie": [],
+                                                    "_postman_previewlanguage": "text"
+                                                }
+                                            ],
+                                            "event": [],
+                                            "protocolProfileBehavior": {
+                                                "disableBodyPruning": true
+                                            }
+                                        },
+                                        {
+                                            "id": "5e2c7721-a3fe-4e0d-93b6-d2db1af94825",
+                                            "name": "Delete connection",
+                                            "request": {
+                                                "name": "Delete connection",
+                                                "description": {},
+                                                "url": {
+                                                    "path": [
+                                                        "workspaces",
+                                                        ":workspaceId",
+                                                        "connections",
+                                                        ":connectionId"
+                                                    ],
+                                                    "host": [
+                                                        "{{baseUrl}}"
+                                                    ],
+                                                    "query": [],
+                                                    "variable": [
+                                                        {
+                                                            "type": "any",
+                                                            "value": "<uuid>",
+                                                            "key": "workspaceId",
+                                                            "disabled": false,
+                                                            "description": {
+                                                                "content": "(Required) ",
+                                                                "type": "text/plain"
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "any",
+                                                            "value": "<uuid>",
+                                                            "key": "connectionId",
+                                                            "disabled": false,
+                                                            "description": {
+                                                                "content": "(Required) ",
+                                                                "type": "text/plain"
+                                                            }
+                                                        }
+                                                    ]
+                                                },
+                                                "method": "DELETE",
+                                                "body": {},
+                                                "auth": {
+                                                    "type": "bearer",
+                                                    "bearer": [
+                                                        {
+                                                            "key": "token",
+                                                            "value": "{{bearerToken}}"
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            "response": [
+                                                {
+                                                    "id": "daaddabf-269a-49a8-9103-caae8157bbd1",
+                                                    "name": "Connection deleted",
+                                                    "originalRequest": {
+                                                        "url": {
+                                                            "path": [
+                                                                "workspaces",
+                                                                ":workspaceId",
+                                                                "connections",
+                                                                ":connectionId"
+                                                            ],
+                                                            "host": [
+                                                                "{{baseUrl}}"
+                                                            ],
+                                                            "query": [],
+                                                            "variable": [
+                                                                {
+                                                                    "disabled": false,
+                                                                    "description": {
+                                                                        "content": "(Required) ",
+                                                                        "type": "text/plain"
+                                                                    },
+                                                                    "type": "any",
+                                                                    "value": "<uuid>",
+                                                                    "key": "workspaceId"
+                                                                },
+                                                                {
+                                                                    "disabled": false,
+                                                                    "description": {
+                                                                        "content": "(Required) ",
+                                                                        "type": "text/plain"
+                                                                    },
+                                                                    "type": "any",
+                                                                    "value": "<uuid>",
+                                                                    "key": "connectionId"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "header": [
+                                                            {
+                                                                "description": {
+                                                                    "content": "Added as a part of security scheme: bearer",
+                                                                    "type": "text/plain"
+                                                                },
+                                                                "key": "Authorization",
+                                                                "value": "Bearer <token>"
+                                                            }
+                                                        ],
+                                                        "method": "DELETE",
+                                                        "body": {}
+                                                    },
+                                                    "status": "No Content",
+                                                    "code": 204,
+                                                    "header": [],
+                                                    "cookie": [],
+                                                    "_postman_previewlanguage": "text"
+                                                }
+                                            ],
+                                            "event": [],
+                                            "protocolProfileBehavior": {
+                                                "disableBodyPruning": true
+                                            }
+                                        },
+                                        {
+                                            "name": "schema",
+                                            "description": "",
+                                            "item": [
+                                                {
+                                                    "id": "28c2a7b9-831c-422a-80d2-396c6e530a13",
+                                                    "name": "Get database schema",
+                                                    "request": {
+                                                        "name": "Get database schema",
+                                                        "description": {},
+                                                        "url": {
+                                                            "path": [
+                                                                "workspaces",
+                                                                ":workspaceId",
+                                                                "connections",
+                                                                ":connectionId",
+                                                                "schema"
+                                                            ],
+                                                            "host": [
+                                                                "{{baseUrl}}"
+                                                            ],
+                                                            "query": [],
+                                                            "variable": [
+                                                                {
+                                                                    "type": "any",
+                                                                    "value": "<uuid>",
+                                                                    "key": "workspaceId",
+                                                                    "disabled": false,
+                                                                    "description": {
+                                                                        "content": "(Required) ",
+                                                                        "type": "text/plain"
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "type": "any",
+                                                                    "value": "<uuid>",
+                                                                    "key": "connectionId",
+                                                                    "disabled": false,
+                                                                    "description": {
+                                                                        "content": "(Required) ",
+                                                                        "type": "text/plain"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        },
+                                                        "header": [
+                                                            {
+                                                                "key": "Accept",
+                                                                "value": "application/json"
+                                                            }
+                                                        ],
+                                                        "method": "GET",
+                                                        "body": {},
+                                                        "auth": {
+                                                            "type": "bearer",
+                                                            "bearer": [
+                                                                {
+                                                                    "key": "token",
+                                                                    "value": "{{bearerToken}}"
+                                                                }
+                                                            ]
+                                                        }
+                                                    },
+                                                    "response": [
+                                                        {
+                                                            "id": "87cd7b37-5078-4694-afc0-ab8590a06f77",
+                                                            "name": "Database schema",
+                                                            "originalRequest": {
+                                                                "url": {
+                                                                    "path": [
+                                                                        "workspaces",
+                                                                        ":workspaceId",
+                                                                        "connections",
+                                                                        ":connectionId",
+                                                                        "schema"
+                                                                    ],
+                                                                    "host": [
+                                                                        "{{baseUrl}}"
+                                                                    ],
+                                                                    "query": [],
+                                                                    "variable": [
+                                                                        {
+                                                                            "disabled": false,
+                                                                            "description": {
+                                                                                "content": "(Required) ",
+                                                                                "type": "text/plain"
+                                                                            },
+                                                                            "type": "any",
+                                                                            "value": "<uuid>",
+                                                                            "key": "workspaceId"
+                                                                        },
+                                                                        {
+                                                                            "disabled": false,
+                                                                            "description": {
+                                                                                "content": "(Required) ",
+                                                                                "type": "text/plain"
+                                                                            },
+                                                                            "type": "any",
+                                                                            "value": "<uuid>",
+                                                                            "key": "connectionId"
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "header": [
+                                                                    {
+                                                                        "key": "Accept",
+                                                                        "value": "application/json"
+                                                                    },
+                                                                    {
+                                                                        "description": {
+                                                                            "content": "Added as a part of security scheme: bearer",
+                                                                            "type": "text/plain"
+                                                                        },
+                                                                        "key": "Authorization",
+                                                                        "value": "Bearer <token>"
+                                                                    }
+                                                                ],
+                                                                "method": "GET",
+                                                                "body": {}
+                                                            },
+                                                            "status": "OK",
+                                                            "code": 200,
+                                                            "header": [
+                                                                {
+                                                                    "key": "Content-Type",
+                                                                    "value": "application/json"
+                                                                }
+                                                            ],
+                                                            "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"database_type\": \"<string>\",\n    \"tables\": [\n      {\n        \"name\": \"<string>\",\n        \"columns\": [\n          {\n            \"name\": \"<string>\",\n            \"data_type\": \"<string>\",\n            \"nullable\": \"<boolean>\",\n            \"primary_key\": \"<boolean>\"\n          },\n          {\n            \"name\": \"<string>\",\n            \"data_type\": \"<string>\",\n            \"nullable\": \"<boolean>\",\n            \"primary_key\": \"<boolean>\"\n          }\n        ]\n      },\n      {\n        \"name\": \"<string>\",\n        \"columns\": [\n          {\n            \"name\": \"<string>\",\n            \"data_type\": \"<string>\",\n            \"nullable\": \"<boolean>\",\n            \"primary_key\": \"<boolean>\"\n          },\n          {\n            \"name\": \"<string>\",\n            \"data_type\": \"<string>\",\n            \"nullable\": \"<boolean>\",\n            \"primary_key\": \"<boolean>\"\n          }\n        ]\n      }\n    ],\n    \"ddl\": \"<string>\"\n  }\n}",
+                                                            "cookie": [],
+                                                            "_postman_previewlanguage": "json"
+                                                        }
+                                                    ],
+                                                    "event": [],
+                                                    "protocolProfileBehavior": {
+                                                        "disableBodyPruning": true
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "query",
+                            "description": "",
+                            "item": [
+                                {
+                                    "id": "ac4cf74d-ce0f-4dc5-9cf8-bc2447fa3dc4",
+                                    "name": "Execute text-to-SQL query",
+                                    "request": {
+                                        "name": "Execute text-to-SQL query",
+                                        "description": {
+                                            "content": "Generate SQL from natural language and optionally execute it",
+                                            "type": "text/plain"
+                                        },
+                                        "url": {
+                                            "path": [
+                                                "workspaces",
+                                                ":workspaceId",
+                                                "query"
+                                            ],
+                                            "host": [
+                                                "{{baseUrl}}"
+                                            ],
+                                            "query": [],
+                                            "variable": [
+                                                {
+                                                    "type": "any",
+                                                    "value": "<uuid>",
+                                                    "key": "workspaceId",
+                                                    "disabled": false,
+                                                    "description": {
+                                                        "content": "(Required) ",
+                                                        "type": "text/plain"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\n  \"connection_id\": \"<uuid>\",\n  \"question\": \"<string>\",\n  \"llm_provider\": \"openai\",\n  \"llm_model\": \"<string>\",\n  \"execute\": true,\n  \"options\": {\n    \"max_rows\": \"<integer>\",\n    \"timeout_seconds\": \"<integer>\"\n  }\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "headerFamily": "json",
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "auth": {
+                                            "type": "bearer",
+                                            "bearer": [
+                                                {
+                                                    "key": "token",
+                                                    "value": "{{bearerToken}}"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": [
+                                        {
+                                            "id": "8bf98b0d-475e-4cd5-8d82-f63ae3e99103",
+                                            "name": "Query result",
+                                            "originalRequest": {
+                                                "url": {
+                                                    "path": [
+                                                        "workspaces",
+                                                        ":workspaceId",
+                                                        "query"
+                                                    ],
+                                                    "host": [
+                                                        "{{baseUrl}}"
+                                                    ],
+                                                    "query": [],
+                                                    "variable": [
+                                                        {
+                                                            "disabled": false,
+                                                            "description": {
+                                                                "content": "(Required) ",
+                                                                "type": "text/plain"
+                                                            },
+                                                            "type": "any",
+                                                            "value": "<uuid>",
+                                                            "key": "workspaceId"
+                                                        }
+                                                    ]
+                                                },
+                                                "header": [
+                                                    {
+                                                        "key": "Content-Type",
+                                                        "value": "application/json"
+                                                    },
+                                                    {
+                                                        "key": "Accept",
+                                                        "value": "application/json"
+                                                    },
+                                                    {
+                                                        "description": {
+                                                            "content": "Added as a part of security scheme: bearer",
+                                                            "type": "text/plain"
+                                                        },
+                                                        "key": "Authorization",
+                                                        "value": "Bearer <token>"
+                                                    }
+                                                ],
+                                                "method": "POST",
+                                                "body": {
+                                                    "mode": "raw",
+                                                    "raw": "{\n  \"connection_id\": \"<uuid>\",\n  \"question\": \"<string>\",\n  \"llm_provider\": \"openai\",\n  \"llm_model\": \"<string>\",\n  \"execute\": true,\n  \"options\": {\n    \"max_rows\": \"<integer>\",\n    \"timeout_seconds\": \"<integer>\"\n  }\n}",
+                                                    "options": {
+                                                        "raw": {
+                                                            "headerFamily": "json",
+                                                            "language": "json"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "status": "OK",
+                                            "code": 200,
+                                            "header": [
+                                                {
+                                                    "key": "Content-Type",
+                                                    "value": "application/json"
+                                                }
+                                            ],
+                                            "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"request_id\": \"<string>\",\n    \"question\": \"<string>\",\n    \"sql\": \"<string>\",\n    \"result\": {\n      \"columns\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"rows\": [\n        \"<array>\",\n        \"<array>\"\n      ],\n      \"row_count\": \"<integer>\",\n      \"truncated\": \"<boolean>\"\n    },\n    \"error\": \"<string>\",\n    \"metadata\": {\n      \"connection_id\": \"<string>\",\n      \"database_type\": \"<string>\",\n      \"llm_provider\": \"<string>\",\n      \"llm_model\": \"<string>\",\n      \"execution_time_ms\": \"<integer>\",\n      \"llm_latency_ms\": \"<integer>\",\n      \"tokens_used\": \"<integer>\"\n    }\n  }\n}",
+                                            "cookie": [],
+                                            "_postman_previewlanguage": "json"
+                                        }
+                                    ],
+                                    "event": [],
+                                    "protocolProfileBehavior": {
+                                        "disableBodyPruning": true
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "generate",
+                            "description": "",
+                            "item": [
+                                {
+                                    "id": "9b2f407f-d341-405c-834e-ebd6dbfba79c",
+                                    "name": "Generate SQL only",
+                                    "request": {
+                                        "name": "Generate SQL only",
+                                        "description": {
+                                            "content": "Generate SQL from natural language without executing",
+                                            "type": "text/plain"
+                                        },
+                                        "url": {
+                                            "path": [
+                                                "workspaces",
+                                                ":workspaceId",
+                                                "generate"
+                                            ],
+                                            "host": [
+                                                "{{baseUrl}}"
+                                            ],
+                                            "query": [],
+                                            "variable": [
+                                                {
+                                                    "type": "any",
+                                                    "value": "<uuid>",
+                                                    "key": "workspaceId",
+                                                    "disabled": false,
+                                                    "description": {
+                                                        "content": "(Required) ",
+                                                        "type": "text/plain"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "header": [
+                                            {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                            },
+                                            {
+                                                "key": "Accept",
+                                                "value": "application/json"
+                                            }
+                                        ],
+                                        "method": "POST",
+                                        "body": {
+                                            "mode": "raw",
+                                            "raw": "{\n  \"connection_id\": \"<uuid>\",\n  \"question\": \"<string>\",\n  \"llm_provider\": \"openai\",\n  \"llm_model\": \"<string>\",\n  \"execute\": true,\n  \"options\": {\n    \"max_rows\": \"<integer>\",\n    \"timeout_seconds\": \"<integer>\"\n  }\n}",
+                                            "options": {
+                                                "raw": {
+                                                    "headerFamily": "json",
+                                                    "language": "json"
+                                                }
+                                            }
+                                        },
+                                        "auth": {
+                                            "type": "bearer",
+                                            "bearer": [
+                                                {
+                                                    "key": "token",
+                                                    "value": "{{bearerToken}}"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "response": [
+                                        {
+                                            "id": "7987c982-6e26-40f2-a7a2-5dd1cf350626",
+                                            "name": "Generated SQL",
+                                            "originalRequest": {
+                                                "url": {
+                                                    "path": [
+                                                        "workspaces",
+                                                        ":workspaceId",
+                                                        "generate"
+                                                    ],
+                                                    "host": [
+                                                        "{{baseUrl}}"
+                                                    ],
+                                                    "query": [],
+                                                    "variable": [
+                                                        {
+                                                            "disabled": false,
+                                                            "description": {
+                                                                "content": "(Required) ",
+                                                                "type": "text/plain"
+                                                            },
+                                                            "type": "any",
+                                                            "value": "<uuid>",
+                                                            "key": "workspaceId"
+                                                        }
+                                                    ]
+                                                },
+                                                "header": [
+                                                    {
+                                                        "key": "Content-Type",
+                                                        "value": "application/json"
+                                                    },
+                                                    {
+                                                        "key": "Accept",
+                                                        "value": "application/json"
+                                                    },
+                                                    {
+                                                        "description": {
+                                                            "content": "Added as a part of security scheme: bearer",
+                                                            "type": "text/plain"
+                                                        },
+                                                        "key": "Authorization",
+                                                        "value": "Bearer <token>"
+                                                    }
+                                                ],
+                                                "method": "POST",
+                                                "body": {
+                                                    "mode": "raw",
+                                                    "raw": "{\n  \"connection_id\": \"<uuid>\",\n  \"question\": \"<string>\",\n  \"llm_provider\": \"openai\",\n  \"llm_model\": \"<string>\",\n  \"execute\": true,\n  \"options\": {\n    \"max_rows\": \"<integer>\",\n    \"timeout_seconds\": \"<integer>\"\n  }\n}",
+                                                    "options": {
+                                                        "raw": {
+                                                            "headerFamily": "json",
+                                                            "language": "json"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "status": "OK",
+                                            "code": 200,
+                                            "header": [
+                                                {
+                                                    "key": "Content-Type",
+                                                    "value": "application/json"
+                                                }
+                                            ],
+                                            "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"request_id\": \"<string>\",\n    \"question\": \"<string>\",\n    \"sql\": \"<string>\",\n    \"result\": {\n      \"columns\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"rows\": [\n        \"<array>\",\n        \"<array>\"\n      ],\n      \"row_count\": \"<integer>\",\n      \"truncated\": \"<boolean>\"\n    },\n    \"error\": \"<string>\",\n    \"metadata\": {\n      \"connection_id\": \"<string>\",\n      \"database_type\": \"<string>\",\n      \"llm_provider\": \"<string>\",\n      \"llm_model\": \"<string>\",\n      \"execution_time_ms\": \"<integer>\",\n      \"llm_latency_ms\": \"<integer>\",\n      \"tokens_used\": \"<integer>\"\n    }\n  }\n}",
+                                            "cookie": [],
+                                            "_postman_previewlanguage": "json"
+                                        }
+                                    ],
+                                    "event": [],
+                                    "protocolProfileBehavior": {
+                                        "disableBodyPruning": true
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "llm-providers",
+            "description": "",
+            "item": [
+                {
+                    "id": "760d4ed5-db0f-4b88-9f73-ecadac126e8a",
+                    "name": "List available LLM providers",
+                    "request": {
+                        "name": "List available LLM providers",
+                        "description": {},
+                        "url": {
+                            "path": [
+                                "llm-providers"
+                            ],
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "query": [],
+                            "variable": []
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "method": "GET",
+                        "body": {},
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{bearerToken}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": [
+                        {
+                            "id": "992f7b01-5d1c-44f5-8354-c2e97a46c40e",
+                            "name": "List of LLM providers",
+                            "originalRequest": {
+                                "url": {
+                                    "path": [
+                                        "llm-providers"
+                                    ],
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "query": [],
+                                    "variable": []
+                                },
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "description": {
+                                            "content": "Added as a part of security scheme: bearer",
+                                            "type": "text/plain"
+                                        },
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                    }
+                                ],
+                                "method": "GET",
+                                "body": {}
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"providers\": [\n      {\n        \"name\": \"<string>\",\n        \"models\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"default\": \"<boolean>\"\n      },\n      {\n        \"name\": \"<string>\",\n        \"models\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"default\": \"<boolean>\"\n      }\n    ],\n    \"default_provider\": \"<string>\"\n  }\n}",
+                            "cookie": [],
+                            "_postman_previewlanguage": "json"
+                        }
+                    ],
+                    "event": [],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    }
+                }
+            ]
+        }
+    ],
+    "event": [],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8081/api/v1"
+        }
+    ],
+    "info": {
+        "_postman_id": "089e20ee-25ae-4f9a-a274-0e904f7f2604",
+        "name": "Text-to-SQL API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "description": {
+            "content": "Production-ready Text-to-SQL API platform for converting natural language to SQL queries.\n\n## Features\n- Multi-tenant workspaces\n- Multiple database support (PostgreSQL, ClickHouse, MySQL)\n- Multiple LLM providers (Ollama, OpenAI, Anthropic, DeepSeek)\n- Secure credential storage (AES-256-GCM)\n- Read-only SQL enforcement\n\n## Authentication\nUse JWT Bearer tokens for authentication. Get tokens via `/auth/login`.\n\n\nContact Support:\n Name: API Support",
+            "type": "text/plain"
+        }
+    }
+}

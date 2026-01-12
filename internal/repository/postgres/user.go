@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/Rrens/text-to-sql/internal/domain"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"github.com/rensmac/text-to-sql/internal/domain"
 )
 
 // UserRepository handles user data access

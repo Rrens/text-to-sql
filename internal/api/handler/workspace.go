@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/rensmac/text-to-sql/internal/api/middleware"
-	"github.com/rensmac/text-to-sql/internal/api/response"
-	"github.com/rensmac/text-to-sql/internal/domain"
-	"github.com/rensmac/text-to-sql/internal/service"
+	"github.com/Rrens/text-to-sql/internal/api/middleware"
+	"github.com/Rrens/text-to-sql/internal/api/response"
+	"github.com/Rrens/text-to-sql/internal/domain"
+	"github.com/Rrens/text-to-sql/internal/service"
 )
 
 // WorkspaceHandler handles workspace endpoints

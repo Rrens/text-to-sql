@@ -22,10 +22,14 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	Host         string        `mapstructure:"host"`
-	Port         int           `mapstructure:"port"`
-	ReadTimeout  time.Duration `mapstructure:"read_timeout"`
-	WriteTimeout time.Duration `mapstructure:"write_timeout"`
+	Host              string        `mapstructure:"host"`
+	Port              int           `mapstructure:"port"`
+	ReadTimeout       time.Duration `mapstructure:"read_timeout"`
+	WriteTimeout      time.Duration `mapstructure:"write_timeout"`
+	IdleTimeout       time.Duration `mapstructure:"idle_timeout"`
+	ShutdownTimeout   time.Duration `mapstructure:"shutdown_timeout"`
+	MiddlewareTimeout time.Duration `mapstructure:"middleware_timeout"`
+	LLMTimeout        time.Duration `mapstructure:"llm_timeout"`
 }
 
 type DatabaseConfig struct {
@@ -74,6 +78,12 @@ type LLMConfig struct {
 	Anthropic       AnthropicConfig `mapstructure:"anthropic"`
 	Ollama          OllamaConfig    `mapstructure:"ollama"`
 	DeepSeek        DeepSeekConfig  `mapstructure:"deepseek"`
+	Gemini          GeminiConfig    `mapstructure:"gemini"`
+}
+
+type GeminiConfig struct {
+	APIKey string `mapstructure:"api_key"`
+	Model  string `mapstructure:"model"`
 }
 
 type OpenAIConfig struct {
@@ -131,10 +141,10 @@ func Load() (*Config, error) {
 	v.SetConfigFile(configPath)
 	v.SetConfigType("yaml")
 
-	// Set defaults
+	// Set defaults first
 	setDefaults(v)
 
-	// Read config file
+	// Read config file first
 	if err := v.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
 			return nil, fmt.Errorf("failed to read config file: %w", err)
@@ -142,7 +152,8 @@ func Load() (*Config, error) {
 		// Config file not found, use defaults and env vars
 	}
 
-	// Override with environment variables
+	// Enable environment variable override
+	// This MUST be called AFTER ReadInConfig for env vars to take priority
 	v.AutomaticEnv()
 	bindEnvVars(v)
 
@@ -155,34 +166,30 @@ func Load() (*Config, error) {
 }
 
 func setDefaults(v *viper.Viper) {
-	// Server
+	// Server - keep sensible defaults
 	v.SetDefault("server.host", "0.0.0.0")
-	v.SetDefault("server.port", 8080)
-	v.SetDefault("server.read_timeout", "30s")
-	v.SetDefault("server.write_timeout", "30s")
+	v.SetDefault("server.port", 8081)
+	v.SetDefault("server.read_timeout", "300s")
+	v.SetDefault("server.write_timeout", "300s")
+	v.SetDefault("server.idle_timeout", "120s")
+	v.SetDefault("server.shutdown_timeout", "30s")
+	v.SetDefault("server.middleware_timeout", "300s")
+	v.SetDefault("server.llm_timeout", "300s")
 
-	// Database
-	v.SetDefault("database.host", "localhost")
-	v.SetDefault("database.port", 5432)
-	v.SetDefault("database.user", "texttosql")
-	v.SetDefault("database.database", "texttosql")
+	// Database - NO DEFAULTS, must come from env vars
 	v.SetDefault("database.ssl_mode", "disable")
 	v.SetDefault("database.max_conns", 20)
 	v.SetDefault("database.min_conns", 5)
 
-	// Redis
-	v.SetDefault("redis.host", "localhost")
-	v.SetDefault("redis.port", 6379)
+	// Redis - NO DEFAULTS for host/port, must come from env vars
 	v.SetDefault("redis.db", 0)
 
 	// Auth
-	v.SetDefault("auth.access_token_ttl", "15m")
+	v.SetDefault("auth.access_token_ttl", "24h")
 	v.SetDefault("auth.refresh_token_ttl", "168h") // 7 days
 
-	// LLM
-	v.SetDefault("llm.default_provider", "ollama")
-	v.SetDefault("llm.ollama.host", "http://localhost:11434")
-	v.SetDefault("llm.ollama.default_model", "llama3")
+	// LLM - NO DEFAULTS for hosts/keys, must come from env vars
+	v.SetDefault("llm.default_provider", "gemini")
 
 	// Security
 	v.SetDefault("security.read_only_default", true)
@@ -201,11 +208,30 @@ func setDefaults(v *viper.Viper) {
 }
 
 func bindEnvVars(v *viper.Viper) {
+	// Server
+	v.BindEnv("server.host", "SERVER_HOST")
+	v.BindEnv("server.port", "SERVER_PORT") // Expects int
+	v.BindEnv("server.read_timeout", "SERVER_READ_TIMEOUT")
+	v.BindEnv("server.write_timeout", "SERVER_WRITE_TIMEOUT")
+	v.BindEnv("server.idle_timeout", "SERVER_IDLE_TIMEOUT")
+	v.BindEnv("server.shutdown_timeout", "SERVER_SHUTDOWN_TIMEOUT")
+	v.BindEnv("server.middleware_timeout", "SERVER_MIDDLEWARE_TIMEOUT")
+	v.BindEnv("server.llm_timeout", "SERVER_LLM_TIMEOUT")
+
 	// Database
+	v.BindEnv("database.host", "POSTGRES_HOST")
+	v.BindEnv("database.port", "POSTGRES_PORT")
+	v.BindEnv("database.user", "POSTGRES_USER")
 	v.BindEnv("database.password", "POSTGRES_PASSWORD")
+	v.BindEnv("database.database", "POSTGRES_DB")
+	v.BindEnv("database.ssl_mode", "POSTGRES_SSL_MODE")
+	v.BindEnv("database.max_conns", "POSTGRES_MAX_CONNS")
 
 	// Redis
+	v.BindEnv("redis.host", "REDIS_HOST")
+	v.BindEnv("redis.port", "REDIS_PORT")
 	v.BindEnv("redis.password", "REDIS_PASSWORD")
+	v.BindEnv("redis.db", "REDIS_DB")
 
 	// Vault
 	v.BindEnv("vault.address", "VAULT_ADDR")
@@ -213,10 +239,25 @@ func bindEnvVars(v *viper.Viper) {
 
 	// Auth
 	v.BindEnv("auth.jwt_secret", "JWT_SECRET")
+	v.BindEnv("auth.access_token_ttl", "ACCESS_TOKEN_TTL")
+	v.BindEnv("auth.refresh_token_ttl", "REFRESH_TOKEN_TTL")
 
-	// LLM API Keys
+	// LLM General
+	v.BindEnv("llm.default_provider", "LLM_DEFAULT_PROVIDER")
+
+	// LLM API Keys & Models
 	v.BindEnv("llm.openai.api_key", "OPENAI_API_KEY")
+	v.BindEnv("llm.openai.model", "OPENAI_MODEL")
+
 	v.BindEnv("llm.anthropic.api_key", "ANTHROPIC_API_KEY")
+	v.BindEnv("llm.anthropic.model", "ANTHROPIC_MODEL")
+
 	v.BindEnv("llm.deepseek.api_key", "DEEPSEEK_API_KEY")
+	v.BindEnv("llm.deepseek.model", "DEEPSEEK_MODEL")
+
+	v.BindEnv("llm.gemini.api_key", "GEMINI_API_KEY")
+	v.BindEnv("llm.gemini.model", "GEMINI_MODEL")
+
 	v.BindEnv("llm.ollama.host", "OLLAMA_HOST")
+	v.BindEnv("llm.ollama.default_model", "OLLAMA_DEFAULT_MODEL")
 }

@@ -10,7 +10,7 @@ import (
 type QueryRequest struct {
 	ConnectionID uuid.UUID     `json:"connection_id" validate:"required"`
 	Question     string        `json:"question" validate:"required,max=2000"`
-	LLMProvider  string        `json:"llm_provider" validate:"omitempty,oneof=openai anthropic ollama deepseek"`
+	LLMProvider  string        `json:"llm_provider" validate:"omitempty,oneof=openai anthropic ollama deepseek gemini"`
 	LLMModel     string        `json:"llm_model,omitempty"`
 	Execute      bool          `json:"execute"`
 	Options      *QueryOptions `json:"options,omitempty"`

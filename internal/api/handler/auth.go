@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/Rrens/text-to-sql/internal/api/response"
+	"github.com/Rrens/text-to-sql/internal/domain"
+	"github.com/Rrens/text-to-sql/internal/service"
 	"github.com/go-playground/validator/v10"
-	"github.com/rensmac/text-to-sql/internal/api/response"
-	"github.com/rensmac/text-to-sql/internal/domain"
-	"github.com/rensmac/text-to-sql/internal/service"
 )
 
 var validate = validator.New()
@@ -31,6 +31,27 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := validate.Struct(input); err != nil {
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			errors := make(map[string]string)
+			for _, e := range validationErrors {
+				field := e.Field()
+				tag := e.Tag()
+				switch tag {
+				case "required":
+					errors[field] = "field is required"
+				case "email":
+					errors[field] = "invalid email format"
+				case "min":
+					errors[field] = "must be at least " + e.Param() + " characters"
+				case "max":
+					errors[field] = "must be at most " + e.Param() + " characters"
+				default:
+					errors[field] = "validation failed on " + tag
+				}
+			}
+			response.BadRequest(w, errors)
+			return
+		}
 		response.BadRequest(w, err.Error())
 		return
 	}

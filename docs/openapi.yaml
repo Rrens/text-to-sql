@@ -20,7 +20,7 @@ info:
     name: MIT
 
 servers:
-  - url: http://localhost:8080/api/v1
+  - url: http://localhost:8081/api/v1
     description: Development server
 
 tags:
@@ -125,6 +125,36 @@ paths:
                 $ref: "#/components/schemas/TokenResponse"
         "401":
           description: Invalid refresh token
+
+  /cache/flush:
+    post:
+      tags: [System]
+      summary: Flush schema cache
+      description: Removes all cached schema data from Redis
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Cache flushed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: cache flushed successfully
+                      keys_deleted:
+                        type: integer
+                        example: 5
+        "401":
+          description: Unauthorized
 
   /workspaces:
     get:
@@ -607,7 +637,7 @@ components:
           maxLength: 2000
         llm_provider:
           type: string
-          enum: [openai, anthropic, ollama, deepseek]
+          enum: [openai, anthropic, ollama, deepseek, gemini]
         llm_model:
           type: string
         execute:

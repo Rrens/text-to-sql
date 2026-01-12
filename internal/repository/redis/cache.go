@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Rrens/text-to-sql/internal/domain"
 	"github.com/google/uuid"
-	"github.com/rensmac/text-to-sql/internal/domain"
 )
 
 const (
@@ -58,4 +58,33 @@ func (c *SchemaCache) Set(ctx context.Context, connectionID uuid.UUID, schema *d
 func (c *SchemaCache) Invalidate(ctx context.Context, connectionID uuid.UUID) error {
 	key := fmt.Sprintf("%s%s", schemaCachePrefix, connectionID.String())
 	return c.client.rdb.Del(ctx, key).Err()
+}
+
+// FlushAll removes all cached schemas
+func (c *SchemaCache) FlushAll(ctx context.Context) (int64, error) {
+	pattern := schemaCachePrefix + "*"
+	var cursor uint64
+	var deleted int64
+
+	for {
+		keys, nextCursor, err := c.client.rdb.Scan(ctx, cursor, pattern, 100).Result()
+		if err != nil {
+			return deleted, fmt.Errorf("failed to scan keys: %w", err)
+		}
+
+		if len(keys) > 0 {
+			count, err := c.client.rdb.Del(ctx, keys...).Result()
+			if err != nil {
+				return deleted, fmt.Errorf("failed to delete keys: %w", err)
+			}
+			deleted += count
+		}
+
+		cursor = nextCursor
+		if cursor == 0 {
+			break
+		}
+	}
+
+	return deleted, nil
 }

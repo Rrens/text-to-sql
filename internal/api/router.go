@@ -1,28 +1,30 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
-	"time"
 
+	"github.com/Rrens/text-to-sql/internal/api/handler"
+	customMiddleware "github.com/Rrens/text-to-sql/internal/api/middleware"
+	"github.com/Rrens/text-to-sql/internal/config"
+	"github.com/Rrens/text-to-sql/internal/llm"
+	"github.com/Rrens/text-to-sql/internal/llm/anthropic"
+	"github.com/Rrens/text-to-sql/internal/llm/deepseek"
+	"github.com/Rrens/text-to-sql/internal/llm/gemini"
+	"github.com/Rrens/text-to-sql/internal/llm/ollama"
+	"github.com/Rrens/text-to-sql/internal/llm/openai"
+	"github.com/Rrens/text-to-sql/internal/mcp"
+	mcpClickhouse "github.com/Rrens/text-to-sql/internal/mcp/clickhouse"
+	mcpMySQL "github.com/Rrens/text-to-sql/internal/mcp/mysql"
+	mcpPostgres "github.com/Rrens/text-to-sql/internal/mcp/postgres"
+	"github.com/Rrens/text-to-sql/internal/repository/postgres"
+	"github.com/Rrens/text-to-sql/internal/repository/redis"
+	"github.com/Rrens/text-to-sql/internal/security"
+	"github.com/Rrens/text-to-sql/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"github.com/rensmac/text-to-sql/internal/api/handler"
-	customMiddleware "github.com/rensmac/text-to-sql/internal/api/middleware"
-	"github.com/rensmac/text-to-sql/internal/config"
-	"github.com/rensmac/text-to-sql/internal/llm"
-	"github.com/rensmac/text-to-sql/internal/llm/anthropic"
-	"github.com/rensmac/text-to-sql/internal/llm/deepseek"
-	"github.com/rensmac/text-to-sql/internal/llm/ollama"
-	"github.com/rensmac/text-to-sql/internal/llm/openai"
-	"github.com/rensmac/text-to-sql/internal/mcp"
-	mcpClickhouse "github.com/rensmac/text-to-sql/internal/mcp/clickhouse"
-	mcpMySQL "github.com/rensmac/text-to-sql/internal/mcp/mysql"
-	mcpPostgres "github.com/rensmac/text-to-sql/internal/mcp/postgres"
-	"github.com/rensmac/text-to-sql/internal/repository/postgres"
-	"github.com/rensmac/text-to-sql/internal/repository/redis"
-	"github.com/rensmac/text-to-sql/internal/security"
-	"github.com/rensmac/text-to-sql/internal/service"
+	"github.com/rs/zerolog/log"
 )
 
 // NewRouter creates and configures the HTTP router
@@ -34,7 +36,7 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 	r.Use(middleware.RealIP)
 	r.Use(customMiddleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(middleware.Timeout(60 * time.Second))
+	r.Use(middleware.Timeout(cfg.Server.MiddlewareTimeout))
 
 	// CORS
 	r.Use(cors.Handler(cors.Options{
@@ -87,7 +89,10 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 	llmRouter := llm.NewRouter(cfg.LLM.DefaultProvider)
 
 	// Register LLM providers
+	log.Info().Msgf("Initializing LLM providers. Default: %s", cfg.LLM.DefaultProvider)
+
 	if cfg.LLM.Ollama.Host != "" {
+		log.Info().Str("host", cfg.LLM.Ollama.Host).Msg("Registering Ollama provider")
 		llmRouter.RegisterProvider(ollama.NewProvider(cfg.LLM.Ollama.Host, cfg.LLM.Ollama.DefaultModel))
 	}
 	if cfg.LLM.OpenAI.APIKey != "" {
@@ -98,6 +103,12 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 	}
 	if cfg.LLM.DeepSeek.APIKey != "" {
 		llmRouter.RegisterProvider(deepseek.NewProvider(cfg.LLM.DeepSeek.APIKey, cfg.LLM.DeepSeek.Model))
+	}
+	if cfg.LLM.Gemini.APIKey != "" {
+		log.Info().Str("key_len", fmt.Sprintf("%d", len(cfg.LLM.Gemini.APIKey))).Msg("Registering Gemini provider")
+		llmRouter.RegisterProvider(gemini.NewProvider(cfg.LLM.Gemini))
+	} else {
+		log.Warn().Msg("Gemini API Key is empty, skipping registration")
 	}
 
 	// Initialize services
@@ -147,6 +158,9 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 
 			// LLM providers
 			r.Get("/llm-providers", handler.ListLLMProviders(cfg))
+
+			// Cache management
+			r.Post("/cache/flush", handler.FlushCache(schemaCache))
 
 			// Workspace routes
 			r.Route("/workspaces", func(r chi.Router) {
