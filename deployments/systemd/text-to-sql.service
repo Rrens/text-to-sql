@@ -1,0 +1,48 @@
+[Unit]
+Description=Text-to-SQL API Server
+Documentation=https://github.com/rensmac/text-to-sql
+After=network-online.target postgresql.service redis.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=texttosql
+Group=texttosql
+WorkingDirectory=/opt/text-to-sql
+
+# Environment
+Environment="CONFIG_PATH=/opt/text-to-sql/config/config.yaml"
+EnvironmentFile=-/opt/text-to-sql/.env
+
+# Binary
+ExecStart=/opt/text-to-sql/bin/server
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Restart policy
+Restart=always
+RestartSec=5
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log/text-to-sql
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+
+# Limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=text-to-sql
+
+[Install]
+WantedBy=multi-user.target

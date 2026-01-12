@@ -1,0 +1,54 @@
+# Binaries
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test
+*.test
+*.out
+coverage.out
+coverage.html
+
+# Dependency directories
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.env
+
+# Config
+configs/config.local.yaml
+configs/config.development.yaml
+
+# Logs
+*.log
+logs/
+
+# Docker
+docker-compose.override.yaml
+docker-compose.override.yml
+
+# Temporary
+tmp/
+temp/
+.tmp/
+
+# Build
+dist/
+release/

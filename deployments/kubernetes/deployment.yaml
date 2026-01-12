@@ -1,0 +1,147 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: text-to-sql
+  labels:
+    app: text-to-sql
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: text-to-sql
+  template:
+    metadata:
+      labels:
+        app: text-to-sql
+    spec:
+      containers:
+        - name: text-to-sql
+          image: text-to-sql:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: CONFIG_PATH
+              value: /app/config/config.yaml
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: text-to-sql-secrets
+                  key: postgres-password
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: text-to-sql-secrets
+                  key: redis-password
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: text-to-sql-secrets
+                  key: jwt-secret
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/v1/ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: config
+          configMap:
+            name: text-to-sql-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: text-to-sql
+spec:
+  selector:
+    app: text-to-sql
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: text-to-sql-config
+data:
+  config.yaml: |
+    server:
+      host: 0.0.0.0
+      port: 8080
+    database:
+      host: postgres-service
+      port: 5432
+      user: texttosql
+      database: texttosql
+      max_conns: 20
+    redis:
+      host: redis-service
+      port: 6379
+    llm:
+      default_provider: ollama
+      ollama:
+        host: http://ollama-service:11434
+    security:
+      read_only_default: true
+      max_rows: 1000
+      query_timeout: 30s
+      rate_limit:
+        requests_per_minute: 60
+        burst: 10
+    logging:
+      level: info
+      format: json
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: text-to-sql-secrets
+type: Opaque
+data:
+  # Base64 encoded values - replace with actual secrets
+  postgres-password: dGV4dHRvc3FsMTIz # texttosql123
+  redis-password: ""
+  jwt-secret: eW91ci1zdXBlci1zZWNyZXQtand0LWtleS1taW5pbXVtLTMyLWNoYXJz # your-super-secret-jwt-key-minimum-32-chars
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: text-to-sql-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: text-to-sql
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80

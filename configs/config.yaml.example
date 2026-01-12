@@ -1,0 +1,61 @@
+server:
+  host: 0.0.0.0
+  port: 8080
+  read_timeout: 30s
+  write_timeout: 30s
+
+database:
+  host: localhost
+  port: 5432
+  user: texttosql
+  password: texttosql123
+  database: texttosql
+  ssl_mode: disable
+  max_conns: 20
+  min_conns: 5
+
+redis:
+  host: localhost
+  port: 6379
+  password: ""
+  db: 0
+
+vault:
+  address: http://localhost:8200
+  token: ""
+
+auth:
+  jwt_secret: your-super-secret-jwt-key-minimum-32-chars
+  access_token_ttl: 15m
+  refresh_token_ttl: 168h
+
+llm:
+  default_provider: ollama
+  openai:
+    api_key: ""
+    model: gpt-4-turbo
+  anthropic:
+    api_key: ""
+    model: claude-3-sonnet
+  ollama:
+    host: http://localhost:11434
+    default_model: llama3
+  deepseek:
+    api_key: ""
+    model: deepseek-chat
+
+security:
+  read_only_default: true
+  max_rows: 1000
+  query_timeout: 30s
+  rate_limit:
+    requests_per_minute: 60
+    burst: 10
+
+logging:
+  level: info
+  format: json
+
+metrics:
+  enabled: true
+  path: /metrics
