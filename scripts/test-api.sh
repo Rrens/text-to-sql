@@ -3,7 +3,7 @@
 
 set -e
 
-BASE_URL="${API_URL:-http://localhost:8080}"
+BASE_URL="${API_URL:-http://localhost:4081}"
 API="$BASE_URL/api/v1"
 
 # Colors

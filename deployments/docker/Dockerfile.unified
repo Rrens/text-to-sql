@@ -1,0 +1,38 @@
+# Stage 1: Build Frontend
+FROM node:20-alpine AS frontend-builder
+WORKDIR /app
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ ./
+RUN npm run build
+# Output: /app/dist
+
+# Stage 2: Build Backend
+FROM golang:alpine AS backend-builder
+WORKDIR /build
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /app/server ./cmd/server
+
+# Stage 3: Final Image
+FROM alpine:latest
+WORKDIR /app
+RUN apk add --no-cache ca-certificates tzdata
+
+# Copy Backend
+COPY --from=backend-builder /app/server /app/server
+
+# Copy Frontend to /app/frontend (served by router)
+# Ensure the backend serves this directory
+COPY --from=frontend-builder /app/dist /app/frontend
+
+# Copy configs/migrations for runtime references (if needed by code)
+COPY configs /app/configs
+COPY migrations /app/migrations
+
+# Environment defaults
+ENV CONFIG_PATH=/app/configs/config.yaml
+
+EXPOSE 4081
+CMD ["/app/server"]

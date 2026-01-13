@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Rrens/text-to-sql/internal/config"
+	"github.com/Rrens/text-to-sql/internal/domain"
 	"github.com/Rrens/text-to-sql/internal/llm"
 	"github.com/google/generative-ai-go/genai"
 	"google.golang.org/api/option"
@@ -69,8 +70,26 @@ func (p *Provider) GenerateSQL(ctx context.Context, req llm.Request, model strin
 
 	prompt := llm.BuildPrompt(req)
 
+	// Convert history to Gemini format
+	var history []*genai.Content
+	for _, msg := range req.History {
+		role := "user"
+		if msg.Role == domain.RoleAssistant {
+			role = "model"
+		}
+		history = append(history, &genai.Content{
+			Role:  role,
+			Parts: []genai.Part{genai.Text(msg.Content)},
+		})
+	}
+
+	// Create chat session with history
+	cs := generativeModel.StartChat()
+	cs.History = history
+
 	start := time.Now()
-	resp, err := generativeModel.GenerateContent(ctx, genai.Text(prompt))
+	// Use SendMessage instead of GenerateContent for chat
+	resp, err := cs.SendMessage(ctx, genai.Text(prompt))
 	latency := time.Since(start).Milliseconds()
 
 	if err != nil {
@@ -102,4 +121,38 @@ func (p *Provider) GenerateSQL(ctx context.Context, req llm.Request, model strin
 		TokensUsed:  tokensUsed,
 		LatencyMs:   latency,
 	}, nil
+}
+
+// GenerateTitle generates a short title for the chat session
+func (p *Provider) GenerateTitle(ctx context.Context, question string, model string) (string, error) {
+	if model == "" {
+		model = p.DefaultModel()
+	}
+
+	client, err := genai.NewClient(ctx, option.WithAPIKey(p.apiKey))
+	if err != nil {
+		return "", fmt.Errorf("failed to create gemini client: %w", err)
+	}
+	defer client.Close()
+
+	genModel := client.GenerativeModel(model)
+
+	prompt := fmt.Sprintf("Summarize the following user question into a very short, concise title (max 5 words). Do not use quotes or prefixes. Question: %s", question)
+	resp, err := genModel.GenerateContent(ctx, genai.Text(prompt))
+	if err != nil {
+		return "", fmt.Errorf("failed to generate title: %w", err)
+	}
+
+	if len(resp.Candidates) == 0 || len(resp.Candidates[0].Content.Parts) == 0 {
+		return "New Chat", nil
+	}
+
+	var title string
+	if text, ok := resp.Candidates[0].Content.Parts[0].(genai.Text); ok {
+		title = string(text)
+	} else {
+		return "New Chat", nil
+	}
+
+	return title, nil
 }

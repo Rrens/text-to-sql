@@ -4,8 +4,9 @@ services:
     build:
       context: ../..
       dockerfile: deployments/docker/Dockerfile
+    image: text-to-sql-backend:latest
     ports:
-      - "8080:8080"
+      - "4081:4081"
     environment:
       - CONFIG_PATH=/app/config/config.yaml
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-texttosql123}
@@ -23,6 +24,19 @@ services:
     networks:
       - texttosql
 
+  frontend:
+    build:
+      context: ../..
+      dockerfile: deployments/docker/Dockerfile.frontend
+    image: text-to-sql-frontend:latest
+    ports:
+      - "4041:80"
+    depends_on:
+      - app
+    restart: unless-stopped
+    networks:
+      - texttosql
+
   postgres:
     image: postgres:15-alpine
     environment:
@@ -33,7 +47,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ../../migrations:/docker-entrypoint-initdb.d:ro
     ports:
-      - "5433:5432"
+      - "55432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U texttosql"]
       interval: 5s
@@ -49,7 +63,7 @@ services:
     volumes:
       - redis_data:/data
     ports:
-      - "6380:6379"
+      - "56379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -65,7 +79,7 @@ services:
     volumes:
       - ollama_data:/root/.ollama
     ports:
-      - "11434:11434"
+      - "11435:11434"
     restart: unless-stopped
     networks:
       - texttosql
@@ -78,27 +92,26 @@ services:
     #           count: 1
     #           capabilities: [gpu]
 
-  # Optional: Vault for production credential management
-  # vault:
-  #   image: hashicorp/vault:1.15
-  #   cap_add:
-  #     - IPC_LOCK
-  #   environment:
-  #     VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_TOKEN:-devtoken}
-  #     VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
-  #   ports:
-  #     - "8200:8200"
-  #   volumes:
-  #     - vault_data:/vault/data
-  #   restart: unless-stopped
-  #   networks:
-  #     - texttosql
+  vault:
+    image: hashicorp/vault:1.15
+    cap_add:
+      - IPC_LOCK
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_TOKEN:-devtoken}
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    ports:
+      - "58200:8200"
+    volumes:
+      - vault_data:/vault/data
+    restart: unless-stopped
+    networks:
+      - texttosql
 
 volumes:
   postgres_data:
   redis_data:
   ollama_data:
-  # vault_data:
+  vault_data:
 
 networks:
   texttosql:

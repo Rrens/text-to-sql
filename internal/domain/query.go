@@ -9,6 +9,7 @@ import (
 // QueryRequest represents a text-to-SQL query request
 type QueryRequest struct {
 	ConnectionID uuid.UUID     `json:"connection_id" validate:"required"`
+	SessionID    uuid.UUID     `json:"session_id,omitempty"`
 	Question     string        `json:"question" validate:"required,max=2000"`
 	LLMProvider  string        `json:"llm_provider" validate:"omitempty,oneof=openai anthropic ollama deepseek gemini"`
 	LLMModel     string        `json:"llm_model,omitempty"`
@@ -24,12 +25,14 @@ type QueryOptions struct {
 
 // QueryResponse represents query execution result
 type QueryResponse struct {
-	RequestID string         `json:"request_id"`
-	Question  string         `json:"question"`
-	SQL       string         `json:"sql"`
-	Result    *QueryResult   `json:"result,omitempty"`
-	Error     string         `json:"error,omitempty"`
-	Metadata  *QueryMetadata `json:"metadata"`
+	RequestID   string         `json:"request_id"`
+	SessionID   uuid.UUID      `json:"session_id,omitempty"`
+	Question    string         `json:"question"`
+	SQL         string         `json:"sql"`
+	Explanation string         `json:"explanation,omitempty"`
+	Result      *QueryResult   `json:"result,omitempty"`
+	Error       string         `json:"error,omitempty"`
+	Metadata    *QueryMetadata `json:"metadata"`
 }
 
 // QueryResult contains query execution data

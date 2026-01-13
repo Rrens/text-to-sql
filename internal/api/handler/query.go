@@ -168,3 +168,26 @@ func (h *QueryHandler) RefreshSchema(w http.ResponseWriter, r *http.Request) {
 
 	response.OK(w, schema)
 }
+
+// GetHistory returns chat history for a workspace
+func (h *QueryHandler) GetHistory(w http.ResponseWriter, r *http.Request) {
+	_, ok := middleware.GetUserID(r.Context())
+	if !ok {
+		response.Unauthorized(w, "unauthorized")
+		return
+	}
+
+	workspaceID, ok := middleware.GetWorkspaceID(r.Context())
+	if !ok {
+		response.BadRequest(w, "missing workspace ID")
+		return
+	}
+
+	history, err := h.queryService.GetChatHistory(r.Context(), workspaceID)
+	if err != nil {
+		response.InternalError(w, err.Error())
+		return
+	}
+
+	response.OK(w, history)
+}

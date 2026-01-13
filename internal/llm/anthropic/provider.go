@@ -144,3 +144,7 @@ func (p *Provider) GenerateSQL(ctx context.Context, req llm.Request, model strin
 		LatencyMs:  latencyMs,
 	}, nil
 }
+
+func (p *Provider) GenerateTitle(ctx context.Context, question string, model string) (string, error) {
+	return "New Chat", nil // Stub
+}

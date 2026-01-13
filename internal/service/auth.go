@@ -152,3 +152,24 @@ func (s *AuthService) Refresh(ctx context.Context, refreshToken string) (*domain
 func (s *AuthService) GetUserByID(ctx context.Context, userID uuid.UUID) (*domain.User, error) {
 	return s.userRepo.GetByID(ctx, userID)
 }
+
+// UpdateLLMConfig updates user's LLM configuration
+func (s *AuthService) UpdateLLMConfig(ctx context.Context, userID uuid.UUID, config map[string]any) (*domain.User, error) {
+	user, err := s.userRepo.GetByID(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user: %w", err)
+	}
+	if user == nil {
+		return nil, errors.New("user not found")
+	}
+
+	// Update config
+	user.LLMConfig = config
+	user.UpdatedAt = time.Now()
+
+	if err := s.userRepo.Update(ctx, user); err != nil {
+		return nil, fmt.Errorf("failed to update user: %w", err)
+	}
+
+	return user, nil
+}

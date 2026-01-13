@@ -112,14 +112,14 @@ docker-ps:
 ## Database commands
 migrate-up:
 	@echo "Running migrations..."
-	docker exec -i mcp-postgres-1 psql -U texttosql -d texttosql < migrations/001_initial.up.sql
+	CONFIG_PATH=configs/config.local.yaml go run cmd/migrate/main.go
 
 migrate-down:
 	@echo "Rolling back migrations..."
-	docker exec -i mcp-postgres-1 psql -U texttosql -d texttosql < migrations/001_initial.down.sql
+	docker exec -i postgres_db psql -U texttosql -d texttosql < migrations/001_initial.down.sql
 
 db-shell:
-	docker exec -it mcp-postgres-1 psql -U texttosql -d texttosql
+	docker exec -it postgres_db psql -U texttosql -d texttosql
 
 ## Setup commands
 setup:

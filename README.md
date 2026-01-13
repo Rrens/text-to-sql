@@ -53,7 +53,7 @@ docker exec -it mcp-ollama-1 ollama pull llama3
 
 ```bash
 # Health check
-curl http://localhost:8080/api/v1/health
+curl http://localhost:4081/api/v1/health
 
 # Or run full API test
 make test-api
@@ -65,12 +65,12 @@ make test-api
 
 ```bash
 # Register
-curl -X POST http://localhost:8080/api/v1/auth/register \
+curl -X POST http://localhost:4081/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email": "user@example.com", "password": "securepass123"}'
 
 # Login
-curl -X POST http://localhost:8080/api/v1/auth/login \
+curl -X POST http://localhost:4081/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "user@example.com", "password": "securepass123"}'
 ```
@@ -78,7 +78,7 @@ curl -X POST http://localhost:8080/api/v1/auth/login \
 ### Create Workspace
 
 ```bash
-curl -X POST http://localhost:8080/api/v1/workspaces \
+curl -X POST http://localhost:4081/api/v1/workspaces \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{"name": "My Workspace"}'
@@ -87,7 +87,7 @@ curl -X POST http://localhost:8080/api/v1/workspaces \
 ### Add Database Connection
 
 ```bash
-curl -X POST http://localhost:8080/api/v1/workspaces/<workspace_id>/connections \
+curl -X POST http://localhost:4081/api/v1/workspaces/<workspace_id>/connections \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -105,7 +105,7 @@ curl -X POST http://localhost:8080/api/v1/workspaces/<workspace_id>/connections 
 ### Execute Text-to-SQL Query
 
 ```bash
-curl -X POST http://localhost:8080/api/v1/workspaces/<workspace_id>/query \
+curl -X POST http://localhost:4081/api/v1/workspaces/<workspace_id>/query \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -177,7 +177,17 @@ A Postman collection is also available at [docs/postman_collection.json](docs/po
 
 ## Deployment
 
-### Docker Compose (Recommended)
+### One-Command Deployment (Server)
+
+If you have `docker` and `curl` installed, you can simply run:
+
+```bash
+mkdir -p text2sql && cd text2sql
+curl -sL https://raw.githubusercontent.com/Rrens/text-to-sql/main/deploy-pkg/docker-compose.yaml > docker-compose.yaml
+docker compose up -d
+```
+
+### Docker Compose (Local Dev)
 
 ```bash
 docker-compose -f deployments/docker/docker-compose.yaml up -d

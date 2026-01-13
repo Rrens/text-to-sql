@@ -1,6 +1,11 @@
 package llm
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/Rrens/text-to-sql/internal/domain"
+)
 
 // BuildPrompt creates a prompt for SQL generation
 func BuildPrompt(req Request) string {
@@ -12,25 +17,51 @@ func BuildPrompt(req Request) string {
 		}
 	}
 
-	return fmt.Sprintf(`You are an expert SQL query generator for %s databases.
+	historyStr := ""
+	if len(req.History) > 0 {
+		var sb strings.Builder
+		sb.WriteString("\n\nChat History:\n")
+		for _, msg := range req.History {
+			role := "User"
+			if msg.Role == domain.RoleAssistant {
+				role = "Assistant"
+			}
+			content := msg.Content
+			if msg.Role == domain.RoleAssistant && msg.SQL != "" {
+				content = fmt.Sprintf("```sql\n%s\n```", msg.SQL)
+			}
+			sb.WriteString(fmt.Sprintf("%s: %s\n", role, content))
+		}
+		historyStr = sb.String()
+	}
 
+	return fmt.Sprintf(`You are an expert SQL query generator for %s databases, but you are also a helpful assistant.
+	
 %s
 
 Rules:
-1. Generate ONLY the SQL query, no explanations or markdown
-2. Use only SELECT statements (no INSERT, UPDATE, DELETE, DROP, etc.)
-3. Always include appropriate LIMIT clauses for safety
-4. Use only tables and columns from the provided schema
-5. Handle NULL values appropriately
-6. Use proper date/time functions for the database dialect
-7. Prefer explicit column names over SELECT *
+1. If the user asks a question that requires data from the database, generate ONLY the SQL query.
+2. If the user sends a greeting, asks a clarification question, or says something that doesn't require a database query, respond naturally in plain text.
+3. For SQL queries:
+   - Use only SELECT statements (no INSERT, UPDATE, DELETE, DROP, etc.)
+   - Always include appropriate LIMIT clauses for safety
+   - Use only tables and columns from the provided schema
+   - Handle NULL values appropriately
+   - Use proper date/time functions for the database dialect
+   - Prefer explicit column names over SELECT *
+4. If you generate SQL, wrap it in a markdown code block like this:
+   `+"```sql"+`
+   SELECT ...
+   `+"```"+`
+5. If you cannot answer the question based on the schema, explain why.
 
 Database Schema:
 %s
 %s
+%s
 Question: %s
 
-SQL:`, req.DatabaseType, req.SQLDialect, req.SchemaDDL, examplesStr, req.Question)
+Response:`, req.DatabaseType, req.SQLDialect, req.SchemaDDL, examplesStr, historyStr, req.Question)
 }
 
 // ExtractSQL extracts SQL from LLM response
@@ -51,8 +82,24 @@ func ExtractSQL(content string) string {
 		return sql
 	}
 
-	// Return trimmed content
-	return trimSQL(content)
+	// If no code block and no SELECT statement found, valid SQL is unlikely.
+	// We check for common SQL keywords just in case, otherwise return empty.
+	trimmed := trimSQL(content)
+	upper := toUpper(trimmed)
+	if startsWithAny(upper, []string{"SELECT", "WITH", "VALUES", "SHOW", "DESCRIBE", "EXPLAIN"}) {
+		return trimmed
+	}
+
+	return ""
+}
+
+func startsWithAny(s string, prefixes []string) bool {
+	for _, p := range prefixes {
+		if len(s) >= len(p) && s[:len(p)] == p {
+			return true
+		}
+	}
+	return false
 }
 
 // removeThinkingTags removes <think>...</think> sections from content

@@ -97,7 +97,7 @@ func (r *WorkspaceRepository) ListByUserID(ctx context.Context, userID uuid.UUID
 	}
 	defer rows.Close()
 
-	var workspaces []domain.Workspace
+	workspaces := []domain.Workspace{}
 	for rows.Next() {
 		var workspace domain.Workspace
 		var settingsJSON []byte

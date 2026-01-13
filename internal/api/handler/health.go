@@ -54,7 +54,7 @@ func ListLLMProviders(cfg *config.Config) http.HandlerFunc {
 		if cfg.LLM.Ollama.Host != "" {
 			providers = append(providers, map[string]any{
 				"name":    "ollama",
-				"models":  []string{"llama3", "codellama", "sqlcoder", "deepseek-coder"},
+				"models":  []string{"qwen2.5-coder:7b", "qwen2.5-coder:1.5b", "llama3", "codellama", "sqlcoder", "deepseek-coder"},
 				"default": cfg.LLM.DefaultProvider == "ollama",
 				"host":    cfg.LLM.Ollama.Host,
 			})

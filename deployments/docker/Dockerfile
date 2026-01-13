@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine AS builder
+FROM golang:alpine AS builder
 
 WORKDIR /build
 
@@ -28,9 +28,9 @@ USER appuser
 
 COPY --from=builder /app/server .
 
-EXPOSE 8080
+EXPOSE 4081
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/v1/health || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:4081/api/v1/health || exit 1
 
 ENTRYPOINT ["./server"]

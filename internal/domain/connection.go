@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"context"
 	"time"
 
 	"github.com/google/uuid"
@@ -14,6 +15,17 @@ const (
 	DatabaseTypeClickHouse DatabaseType = "clickhouse"
 	DatabaseTypeMySQL      DatabaseType = "mysql"
 )
+
+// WorkspaceRepository defines the interface for workspace storage
+type WorkspaceRepository interface {
+	Create(ctx context.Context, workspace *Workspace) error
+	GetByID(ctx context.Context, id uuid.UUID) (*Workspace, error)
+	Update(ctx context.Context, id uuid.UUID, update *WorkspaceUpdate) error
+	AddMember(ctx context.Context, member *WorkspaceMember) error
+	GetMember(ctx context.Context, workspaceID, userID uuid.UUID) (*WorkspaceMember, error)
+	IsMember(ctx context.Context, workspaceID, userID uuid.UUID) (bool, error)
+	ListByUserID(ctx context.Context, userID uuid.UUID) ([]Workspace, error)
+}
 
 // Connection represents a database connection configuration
 type Connection struct {
@@ -77,6 +89,16 @@ type ConnectionInfo struct {
 	ReadOnly     bool         `json:"read_only"`
 	MaxRows      int          `json:"max_rows"`
 	CreatedAt    time.Time    `json:"created_at"`
+}
+
+// ConnectionRepository defines the interface for connection storage
+type ConnectionRepository interface {
+	Create(ctx context.Context, conn *Connection) error
+	GetByID(ctx context.Context, id uuid.UUID) (*Connection, error)
+	GetByIDAndWorkspace(ctx context.Context, id, workspaceID uuid.UUID) (*Connection, error)
+	ListByWorkspace(ctx context.Context, workspaceID uuid.UUID) ([]Connection, error)
+	Update(ctx context.Context, id uuid.UUID, conn *Connection) error
+	Delete(ctx context.Context, id uuid.UUID) error
 }
 
 // ToInfo converts Connection to ConnectionInfo (without sensitive data)

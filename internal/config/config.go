@@ -168,7 +168,7 @@ func Load() (*Config, error) {
 func setDefaults(v *viper.Viper) {
 	// Server - keep sensible defaults
 	v.SetDefault("server.host", "0.0.0.0")
-	v.SetDefault("server.port", 8081)
+	v.SetDefault("server.port", 4081)
 	v.SetDefault("server.read_timeout", "300s")
 	v.SetDefault("server.write_timeout", "300s")
 	v.SetDefault("server.idle_timeout", "120s")

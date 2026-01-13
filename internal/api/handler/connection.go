@@ -209,10 +209,28 @@ func (h *ConnectionHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 // Test handles testing a connection
 func (h *ConnectionHandler) Test(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement connection testing
-	// This will be implemented with MCP adapters
+	var input domain.ConnectionCreate
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		response.BadRequest(w, "invalid request body")
+		return
+	}
+
+	if err := validate.Struct(input); err != nil {
+		response.BadRequest(w, err.Error())
+		return
+	}
+
+	err := h.connectionService.TestConnection(r.Context(), input)
+	if err != nil {
+		response.BadRequest(w, map[string]any{
+			"connected": false,
+			"error":     err.Error(),
+		})
+		return
+	}
+
 	response.OK(w, map[string]any{
-		"status":  "not_implemented",
-		"message": "Connection testing will be available with MCP adapters",
+		"connected": true,
+		"message":   "Connection successful",
 	})
 }

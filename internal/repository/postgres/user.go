@@ -44,7 +44,7 @@ func (r *UserRepository) Create(ctx context.Context, user *domain.User) error {
 // GetByID retrieves a user by ID
 func (r *UserRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.User, error) {
 	query := `
-		SELECT id, email, password_hash, created_at, updated_at
+		SELECT id, email, password_hash, created_at, updated_at, COALESCE(llm_config, '{}'::jsonb)
 		FROM users
 		WHERE id = $1
 	`
@@ -56,6 +56,7 @@ func (r *UserRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Use
 		&user.PasswordHash,
 		&user.CreatedAt,
 		&user.UpdatedAt,
+		&user.LLMConfig,
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -70,7 +71,7 @@ func (r *UserRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Use
 // GetByEmail retrieves a user by email
 func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
 	query := `
-		SELECT id, email, password_hash, created_at, updated_at
+		SELECT id, email, password_hash, created_at, updated_at, COALESCE(llm_config, '{}'::jsonb)
 		FROM users
 		WHERE email = $1
 	`
@@ -82,6 +83,7 @@ func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*domain.
 		&user.PasswordHash,
 		&user.CreatedAt,
 		&user.UpdatedAt,
+		&user.LLMConfig,
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -104,4 +106,26 @@ func (r *UserRepository) EmailExists(ctx context.Context, email string) (bool, e
 	}
 
 	return exists, nil
+}
+
+// Update updates a user
+func (r *UserRepository) Update(ctx context.Context, user *domain.User) error {
+	query := `
+		UPDATE users
+		SET email = $2, password_hash = $3, updated_at = $4, llm_config = $5
+		WHERE id = $1
+	`
+
+	_, err := r.db.Pool.Exec(ctx, query,
+		user.ID,
+		user.Email,
+		user.PasswordHash,
+		user.UpdatedAt,
+		user.LLMConfig,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to update user: %w", err)
+	}
+
+	return nil
 }

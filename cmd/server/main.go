@@ -8,16 +8,20 @@ import (
 	"os/signal"
 	"syscall"
 
+	"time"
+
 	"github.com/Rrens/text-to-sql/internal/api"
 	"github.com/Rrens/text-to-sql/internal/config"
 	"github.com/Rrens/text-to-sql/internal/repository/postgres"
 	"github.com/Rrens/text-to-sql/internal/repository/redis"
 	"github.com/joho/godotenv"
+	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
 func main() {
+	// ... existing env loading code ...
 	// Load .env file - try multiple locations
 	envPaths := []string{".env", "../.env", "../../.env"}
 	envLoaded := false
@@ -45,10 +49,34 @@ func main() {
 		os.Getenv("OLLAMA_HOST"),
 	)
 
-	// Setup logger
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	if os.Getenv("ENV") != "production" {
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	// Setup logger with rotation
+	zerolog.TimeFieldFormat = time.RFC3339
+
+	// Ensure logs directory exists
+	if err := os.MkdirAll("logs", 0755); err != nil {
+		fmt.Printf("Failed to create logs directory: %v\n", err)
+	}
+
+	// Configure log rotation
+	logFile := "logs/app-%Y-%m-%d-%H.log"
+	rotator, err := rotatelogs.New(
+		logFile,
+		rotatelogs.WithRotationTime(time.Hour),
+		rotatelogs.WithMaxAge(7*24*time.Hour), // Keep logs for 7 days
+	)
+	if err != nil {
+		fmt.Printf("Failed to initialize log rotation: %v\n", err)
+	}
+
+	// Multi-writer: Console + File
+	// Console writer (pretty print for dev)
+	consoleWriter := zerolog.ConsoleWriter{Out: os.Stderr}
+
+	if rotator != nil {
+		multi := zerolog.MultiLevelWriter(consoleWriter, rotator)
+		log.Logger = zerolog.New(multi).With().Timestamp().Logger()
+	} else {
+		log.Logger = log.Output(consoleWriter)
 	}
 
 	// Load configuration
@@ -62,12 +90,29 @@ func main() {
 		Int("port", cfg.Server.Port).
 		Msg("Starting Text-to-SQL API server")
 
+	log.Info().Msg("Made by Rendy Yusuf (https://www.linkedin.com/in/rendy-yusuf)")
+
 	// Initialize database
 	db, err := postgres.NewDB(context.Background(), cfg.Database)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
 	defer db.Close()
+
+	// Run database migrations
+	migrationSource := "file://./migrations" // Default relative path
+	if os.Getenv("MIGRATION_SOURCE") != "" {
+		migrationSource = os.Getenv("MIGRATION_SOURCE")
+	}
+	// In Docker, we copy migrations to /app/migrations
+	if _, err := os.Stat("/app/migrations"); err == nil {
+		migrationSource = "file:///app/migrations"
+	}
+
+	log.Info().Msgf("Running migrations from %s", migrationSource)
+	if err := postgres.RunMigrations(cfg.Database.DSN(), migrationSource); err != nil {
+		log.Fatal().Err(err).Msg("Failed to run database migrations")
+	}
 
 	// Initialize Redis
 	redisClient, err := redis.NewClient(cfg.Redis)

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/Rrens/text-to-sql/internal/api/middleware"
 	"github.com/Rrens/text-to-sql/internal/api/response"
 	"github.com/Rrens/text-to-sql/internal/domain"
 	"github.com/Rrens/text-to-sql/internal/service"
@@ -113,4 +114,52 @@ func (h *AuthHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.OK(w, tokens)
+}
+
+// Me returns the current authenticated user
+func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
+	userID, ok := middleware.GetUserID(r.Context())
+	if !ok {
+		response.Unauthorized(w, "unauthorized")
+		return
+	}
+
+	user, err := h.authService.GetUserByID(r.Context(), userID)
+	if err != nil {
+		response.InternalError(w, err.Error())
+		return
+	}
+	if user == nil {
+		response.Unauthorized(w, "user not found")
+		return
+	}
+
+	response.OK(w, map[string]any{
+		"id":         user.ID,
+		"email":      user.Email,
+		"llm_config": user.LLMConfig,
+	})
+}
+
+// UpdateLLMConfig updates user's LLM credentials
+func (h *AuthHandler) UpdateLLMConfig(w http.ResponseWriter, r *http.Request) {
+	userID, ok := middleware.GetUserID(r.Context())
+	if !ok {
+		response.Unauthorized(w, "unauthorized")
+		return
+	}
+
+	var config map[string]any
+	if err := json.NewDecoder(r.Body).Decode(&config); err != nil {
+		response.BadRequest(w, "invalid request body")
+		return
+	}
+
+	user, err := h.authService.UpdateLLMConfig(r.Context(), userID, config)
+	if err != nil {
+		response.InternalError(w, err.Error())
+		return
+	}
+
+	response.OK(w, user)
 }
