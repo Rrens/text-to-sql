@@ -61,6 +61,7 @@ services:
       - texttosql
 
   ollama:
+    profiles: ["ollama"]
     image: ollama/ollama:latest
     volumes:
       - ollama_data:/root/.ollama

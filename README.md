@@ -187,6 +187,12 @@ curl -sL https://raw.githubusercontent.com/Rrens/text-to-sql/main/deploy-pkg/doc
 docker compose up -d
 ```
 
+> **Note:** Ollama (local LLM) is disabled by default to save resources. To enable it:
+>
+> ```bash
+> docker compose --profile ollama up -d
+> ```
+
 ### Docker Compose (Local Dev)
 
 ```bash

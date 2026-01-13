@@ -74,28 +74,30 @@ Gunakan paket distribusi `text-to-sql-dist.tar.gz` yang sudah disiapkan. Paket i
 
 ### Langkah-langkah:
 
-1.  **Upload** file `text-to-sql-dist.tar.gz` ke server kamu (contohnya ke `/home/rrens/`).
-2.  **Extract** file tersebut:
-    ```bash
-    tar -xzf text-to-sql-dist.tar.gz
-    ```
-3.  **Masuk ke folder** hasil extract:
-    ```bash
-    cd deploy-pkg
-    ```
-4.  **Jalankan Aplikasi** (pilih salah satu cara):
-    - **Cara Mudah (Recommended):**
-      ```bash
-      ./start.sh
-      ```
-    - **Cara Manual:**
-      ```bash
-      docker compose up -d
-      ```
+### Langkah-langkah:
 
-Aplikasi akan berjalan di background. Port default API adalah **4081** (bukan 8080 lagi).
+1.  **Dapatkan File Config:**
 
----
+    - **Jika Repo Public:**
+      ```bash
+      curl -sL https://raw.githubusercontent.com/Rrens/text-to-sql/main/deploy-pkg/docker-compose.yaml > docker-compose.yaml
+      ```
+    - **Jika Repo Private (Gunakan Secret Gist):**
+      1. Buka [gist.github.com](https://gist.github.com).
+      2. Buat Gist baru (pilih "Create secret gist").
+      3. Copas isi file `deploy-pkg/docker-compose.yaml` ke sana.
+      4. Klik tombol "Raw" di Gist yang sudah jadi, copy URL-nya.
+      5. Gunakan URL itu:
+         ```bash
+         curl -sL https://gist.githubusercontent.com/USER/ID/raw/docker-compose.yaml > docker-compose.yaml
+         ```
+
+2.  **Jalankan Aplikasi:**
+    ```bash
+    docker compose up -d
+    ```
+
+## Aplikasi akan berjalan di background. Port default API adalah **4081**.
 
 ## Catatan Penting
 
