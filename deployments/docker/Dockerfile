@@ -38,12 +38,15 @@ COPY --from=builder /app/server .
 COPY --chown=appuser:appgroup configs /app/configs
 COPY --chown=appuser:appgroup migrations /app/migrations
 
+# Create logs directory with correct permissions
+RUN mkdir -p /app/logs && chown -R appuser:appgroup /app/logs && chmod 755 /app/logs
+
 # Environment defaults
 ENV CONFIG_PATH=/app/configs/config.yaml
 
 EXPOSE 8080
 
-# Health check
+# Health check (using -O - to strictly use GET, spider often uses HEAD)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/v1/health || exit 1
 
