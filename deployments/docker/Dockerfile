@@ -27,9 +27,8 @@ RUN apk add --no-cache ca-certificates tzdata wget \
 
 WORKDIR /app
 
-# Create non-root user for security
+# Create non-root user for security (but stay as root for setup)
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
 
 # Copy binary from builder
 COPY --from=builder /app/server .
@@ -38,16 +37,26 @@ COPY --from=builder /app/server .
 COPY --chown=appuser:appgroup configs /app/configs
 COPY --chown=appuser:appgroup migrations /app/migrations
 
-# Create logs directory with correct permissions
-RUN mkdir -p /app/logs && chown -R appuser:appgroup /app/logs && chmod 755 /app/logs
+# Create necessary directories and set permissions
+RUN mkdir -p /app/logs /app/data/sqlite && \
+  chown -R appuser:appgroup /app/logs /app/data && \
+  chmod 755 /app/logs /app/data/sqlite
 
 # Environment defaults
 ENV CONFIG_PATH=/app/configs/config.yaml
 
 EXPOSE 8080
 
-# Health check (using -O - to strictly use GET, spider often uses HEAD)
+# Switch to non-root user
+USER appuser
+
+# Environment defaults
+ENV CONFIG_PATH=/app/configs/config.yaml
+
+EXPOSE 8080
+
+# Health check (using -O /dev/null to strictly use GET, spider uses HEAD)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/v1/health || exit 1
+  CMD wget --no-verbose --tries=1 -O /dev/null http://localhost:8080/api/v1/health || exit 1
 
 ENTRYPOINT ["./server"]
