@@ -115,6 +115,14 @@ const Workspace = () => {
       gemini_key: ''
   });
   const [isSavingLLM, setIsSavingLLM] = useState(false);
+  const [isLLMSaved, setIsLLMSaved] = useState(false);
+
+  useEffect(() => {
+    if (isLLMSaved) {
+        const timer = setTimeout(() => setIsLLMSaved(false), 3000);
+        return () => clearTimeout(timer);
+    }
+  }, [isLLMSaved]);
 
   useEffect(() => {
       if (user?.llm_config) {
@@ -141,11 +149,10 @@ const Workspace = () => {
           };
           const updatedUser = await userService.updateLLMConfig(config);
           // Update user in context (we need token, assume it's same)
-          const token = localStorage.getItem('token');
           if (token && updatedUser && updatedUser.data) {
               login(token, updatedUser.data);
           }
-          // Show success toast?
+          setIsLLMSaved(true);
       } catch (error) {
           console.error("Failed to update LLM config", error);
       } finally {
@@ -1186,10 +1193,11 @@ const Workspace = () => {
                                             placeholder="AIza..."
                                         />
                                     </div>
-                                    <div className="flex justify-end">
-                                        <button type="submit" className="btn-primary" disabled={isSavingLLM}>
-                                            {isSavingLLM ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                                            Save Credentials
+                                    <div className="flex justify-end items-center gap-4">
+                                        {isSavingLLM ? null : (isLLMSaved ? <span className="text-green-400 text-sm animate-fade-in flex items-center gap-1"><Check className="w-4 h-4" /> Saved successfully</span> : null)}
+                                        <button type="submit" className={clsx("btn-primary transition-all duration-300", isLLMSaved && "bg-green-600 hover:bg-green-700")} disabled={isSavingLLM}>
+                                            {isSavingLLM ? <Loader2 className="w-4 h-4 animate-spin" /> : (isLLMSaved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />)}
+                                            {isLLMSaved ? "Saved!" : "Save Credentials"}
                                         </button>
                                     </div>
                                 </form>
