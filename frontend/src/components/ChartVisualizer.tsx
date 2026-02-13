@@ -20,7 +20,7 @@ export const ChartVisualizer = ({ result }: ChartVisualizerProps) => {
 
   // Transform data for Recharts
   const data = useMemo(() => {
-    if (!result || !result.rows) return [];
+    if (!result || !result.rows || !result.columns) return [];
     return result.rows.map(row => {
       const obj: any = {};
       result.columns.forEach((col, i) => {

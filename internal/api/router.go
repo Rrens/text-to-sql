@@ -20,6 +20,7 @@ import (
 	mcpMongo "github.com/Rrens/text-to-sql/internal/mcp/mongo"
 	mcpMySQL "github.com/Rrens/text-to-sql/internal/mcp/mysql"
 	mcpPostgres "github.com/Rrens/text-to-sql/internal/mcp/postgres"
+	mcpSQLite "github.com/Rrens/text-to-sql/internal/mcp/sqlite"
 	"github.com/Rrens/text-to-sql/internal/repository/postgres"
 	"github.com/Rrens/text-to-sql/internal/repository/redis"
 	"github.com/Rrens/text-to-sql/internal/security"
@@ -91,6 +92,7 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 	mcpRouter.RegisterAdapter("clickhouse", mcpClickhouse.NewAdapter)
 	mcpRouter.RegisterAdapter("mysql", mcpMySQL.NewAdapter)
 	mcpRouter.RegisterAdapter("mongodb", mcpMongo.NewAdapter)
+	mcpRouter.RegisterAdapter("sqlite", mcpSQLite.NewAdapter)
 
 	// Initialize LLM Router with providers
 	llmRouter := llm.NewRouter(cfg.LLM.DefaultProvider)
@@ -197,6 +199,7 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 	workspaceHandler := handler.NewWorkspaceHandler(workspaceService)
 	connectionHandler := handler.NewConnectionHandler(connectionService)
 	queryHandler := handler.NewQueryHandler(queryService)
+	uploadHandler := handler.NewUploadHandler("data/sqlite")
 
 	// Auth middleware
 	authMiddleware := customMiddleware.NewAuthMiddleware(jwtManager)
@@ -277,6 +280,9 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 							r.Post("/schema/refresh", queryHandler.RefreshSchema)
 						})
 					})
+
+					// Upload routes
+					r.Post("/upload-sqlite", uploadHandler.UploadSQLite)
 				})
 			})
 		})

@@ -14,6 +14,7 @@ const (
 	DatabaseTypePostgres   DatabaseType = "postgres"
 	DatabaseTypeClickHouse DatabaseType = "clickhouse"
 	DatabaseTypeMySQL      DatabaseType = "mysql"
+	DatabaseTypeSQLite     DatabaseType = "sqlite"
 )
 
 // WorkspaceRepository defines the interface for workspace storage
@@ -49,7 +50,7 @@ type Connection struct {
 // ConnectionCreate represents connection creation data
 type ConnectionCreate struct {
 	Name           string       `json:"name" validate:"required,max=255"`
-	DatabaseType   DatabaseType `json:"database_type" validate:"required,oneof=postgres clickhouse mysql"`
+	DatabaseType   DatabaseType `json:"database_type" validate:"required,oneof=postgres clickhouse mysql sqlite"`
 	Host           string       `json:"host" validate:"required,max=255"`
 	Port           int          `json:"port" validate:"required,min=1,max=65535"`
 	Database       string       `json:"database" validate:"required,max=255"`

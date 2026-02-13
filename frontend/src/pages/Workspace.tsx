@@ -11,6 +11,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 import Sidebar from '../components/Sidebar';
 import { ChartVisualizer } from '../components/ChartVisualizer';
+import ErrorBoundary from '../components/ErrorBoundary';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Message {
   id: string;
@@ -49,7 +52,8 @@ const Workspace = () => {
   
   // Workspace State
   const [workspaceName, setWorkspaceName] = useState('Workspace');
-  // const [isLoadingWorkspace, setIsLoadingWorkspace] = useState(true);
+  const [isLoadingWorkspace, setIsLoadingWorkspace] = useState(true);
+  const [workspaceError, setWorkspaceError] = useState<string | null>(null);
 
   // Session State
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -92,6 +96,9 @@ const Workspace = () => {
   const [deletingConnectionId, setDeletingConnectionId] = useState<string | null>(null);
   const [isTestingConnection, setIsTestingConnection] = useState(false);
   const [testConnectionResult, setTestConnectionResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [sqliteInputMode, setSqliteInputMode] = useState<'upload' | 'url'>('upload');
+  const [isUploadingSqlite, setIsUploadingSqlite] = useState(false);
+  const [uploadedFileName, setUploadedFileName] = useState<string>('');
 
   // LLM State
   const [providers, setProviders] = useState<any[]>([]);
@@ -174,16 +181,25 @@ const Workspace = () => {
   };
 
   const fetchWorkspaceDetails = async () => {
-    // setIsLoadingWorkspace(true);
+    setIsLoadingWorkspace(true);
+    setWorkspaceError(null);
     try {
       const res = await api.get(`/workspaces/${workspaceId}`);
       if (res.data.success) {
         setWorkspaceName(res.data.data.name);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      const status = err.response?.status;
+      if (status === 403) {
+        setWorkspaceError('You do not have access to this workspace.');
+      } else if (status === 404) {
+        setWorkspaceError('Workspace not found.');
+      } else {
+        setWorkspaceError('Failed to load workspace. Please try again.');
+      }
     } finally {
-        // setIsLoadingWorkspace(false);
+      setIsLoadingWorkspace(false);
     }
   };
 
@@ -346,15 +362,16 @@ const Workspace = () => {
     setIsSubmittingConnection(true);
 
     try {
+        const isSQLite = connectionForm.type === 'sqlite';
         const payload = {
             name: connectionForm.name,
             database_type: connectionForm.type,
-            host: connectionForm.host,
-            port: parseInt(connectionForm.port),
+            host: isSQLite ? 'localhost' : connectionForm.host,
+            port: isSQLite ? 1 : parseInt(connectionForm.port),
             database: connectionForm.dbname,
-            username: connectionForm.user,
-            password: connectionForm.password,
-            ssl_mode: connectionForm.sslMode,
+            username: isSQLite ? 'sqlite' : connectionForm.user,
+            password: isSQLite ? 'sqlite' : connectionForm.password,
+            ssl_mode: isSQLite ? 'disable' : connectionForm.sslMode,
             max_rows: parseInt(connectionForm.maxRows.toString()),
             timeout_seconds: parseInt(connectionForm.timeout.toString())
         };
@@ -363,7 +380,7 @@ const Workspace = () => {
         if (editingConnection) {
             res = await api.patch(`/workspaces/${workspaceId}/connections/${editingConnection.id}`, payload);
         } else {
-            if (!connectionForm.password) {
+            if (!isSQLite && !connectionForm.password) {
                  alert("Password is required for new connections");
                  setIsSubmittingConnection(false);
                  return;
@@ -408,15 +425,16 @@ const Workspace = () => {
       setIsTestingConnection(true);
       setTestConnectionResult(null);
       try {
+          const isSQLiteTest = connectionForm.type === 'sqlite';
           const payload = {
               name: connectionForm.name || 'test',
               database_type: connectionForm.type,
-              host: connectionForm.host,
-              port: parseInt(connectionForm.port),
+              host: isSQLiteTest ? 'localhost' : connectionForm.host,
+              port: isSQLiteTest ? 1 : parseInt(connectionForm.port),
               database: connectionForm.dbname,
-              username: connectionForm.user,
-              password: connectionForm.password,
-              ssl_mode: connectionForm.sslMode,
+              username: isSQLiteTest ? 'sqlite' : connectionForm.user,
+              password: isSQLiteTest ? 'sqlite' : connectionForm.password,
+              ssl_mode: isSQLiteTest ? 'disable' : connectionForm.sslMode,
               max_rows: parseInt(connectionForm.maxRows.toString()),
               timeout_seconds: parseInt(connectionForm.timeout.toString())
           };
@@ -539,6 +557,37 @@ const Workspace = () => {
       }
   };
 
+
+  if (isLoadingWorkspace) {
+    return (
+      <div className="h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-10 h-10 animate-spin text-primary" />
+          <p className="text-gray-400">Loading workspace...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (workspaceError) {
+    return (
+      <div className="h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4 text-center max-w-md">
+          <AlertCircle className="w-12 h-12 text-red-400" />
+          <h2 className="text-xl font-semibold text-white">Unable to Load Workspace</h2>
+          <p className="text-gray-400">{workspaceError}</p>
+          <div className="flex gap-3">
+            <button onClick={() => navigate('/')} className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors">
+              Go Home
+            </button>
+            <button onClick={() => { setWorkspaceError(null); fetchWorkspaceDetails(); }} className="px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors">
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen bg-background flex overflow-hidden">
@@ -749,8 +798,49 @@ const Workspace = () => {
                                             ) : (
                                                 <div className="space-y-4">
                                                 {msg.content && !msg.sql && (
-                                                    <div className="bg-white/5 p-4 rounded-xl text-gray-200 whitespace-pre-wrap">
-                                                        {msg.content}
+                                                    <div className="bg-white/5 p-4 rounded-xl text-gray-200 prose prose-invert max-w-none overflow-x-auto">
+                                                        <ReactMarkdown 
+                                                            remarkPlugins={[remarkGfm]}
+                                                            components={{
+                                                                // Custom styling for code blocks to match the theme
+                                                                code({node, inline, className, children, ...props}: any) {
+                                                                    const match = /language-(\w+)/.exec(className || '')
+                                                                    return !inline && match ? (
+                                                                        <div className="rounded-md overflow-hidden my-2 border border-white/10 bg-[#0d1117]">
+                                                                            <div className="px-3 py-1 bg-white/5 border-b border-white/5 text-xs text-gray-400 font-mono">
+                                                                                {match[1]}
+                                                                            </div>
+                                                                            <code className={clsx("block p-3 overflow-x-auto text-sm font-mono", className)} {...props}>
+                                                                                {children}
+                                                                            </code>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <code className={clsx("bg-white/10 px-1.5 py-0.5 rounded text-sm font-mono text-blue-300", className)} {...props}>
+                                                                            {children}
+                                                                        </code>
+                                                                    )
+                                                                },
+                                                                // Style tables
+                                                                table({children}: any) {
+                                                                    return <div className="overflow-x-auto my-4 border border-white/10 rounded-lg"><table className="min-w-full divide-y divide-white/10 text-sm">{children}</table></div>
+                                                                },
+                                                                thead({children}: any) {
+                                                                    return <thead className="bg-white/5">{children}</thead>
+                                                                },
+                                                                th({children}: any) {
+                                                                    return <th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">{children}</th>
+                                                                },
+                                                                td({children}: any) {
+                                                                    return <td className="px-4 py-2 whitespace-nowrap text-gray-300 border-t border-white/5">{children}</td>
+                                                                },
+                                                                // Style links
+                                                                a({children, href}: any) {
+                                                                    return <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">{children}</a>
+                                                                }
+                                                            }}
+                                                        >
+                                                            {msg.content}
+                                                        </ReactMarkdown>
                                                     </div>
                                                 )}
                                                 {msg.sql && (
@@ -782,7 +872,9 @@ const Workspace = () => {
                                                       </div>
                                                       
                                                       <div className="p-4 border-b border-white/5">
-                                                        <ChartVisualizer result={msg.result} />
+                                                        <ErrorBoundary fallback={<div className="p-4 text-center text-gray-500 text-sm">Chart could not be rendered</div>}>
+                                                          <ChartVisualizer result={msg.result} />
+                                                        </ErrorBoundary>
                                                       </div>
 
                                                       <div className="overflow-x-auto max-h-96">
@@ -944,6 +1036,13 @@ const Workspace = () => {
                                         </div>
 
                                         <div className="space-y-2 text-sm text-gray-400">
+                                            {conn.database_type === 'sqlite' ? (
+                                                <div className="flex justify-between">
+                                                    <span>File:</span>
+                                                    <span className="text-gray-300 truncate ml-2 max-w-[200px]" title={conn.database}>{conn.database}</span>
+                                                </div>
+                                            ) : (
+                                            <>
                                             <div className="flex justify-between">
                                                 <span>Host:</span>
                                                 <span className="text-gray-300">{conn.host}</span>
@@ -960,6 +1059,8 @@ const Workspace = () => {
                                                 <span>User:</span>
                                                 <span className="text-gray-300">{conn.username}</span>
                                             </div>
+                                            </>
+                                            )}
                                         </div>
                                         
                                         {selectedConnection === conn.id && (
@@ -1158,6 +1259,7 @@ const Workspace = () => {
                                 else if (type === 'mysql') port = '3306';
                                 else if (type === 'clickhouse') port = '8123';
                                 else if (type === 'mongodb') port = '27017';
+                                else if (type === 'sqlite') port = '0';
                                 setConnectionForm({...connectionForm, type, port});
                             }}
                             className="glass-input w-full bg-[#11141d] cursor-pointer" // Force dark bg for select
@@ -1166,9 +1268,118 @@ const Workspace = () => {
                             <option value="mysql">MySQL</option>
                             <option value="clickhouse">ClickHouse</option>
                             <option value="mongodb">MongoDB</option>
+                            <option value="sqlite">SQLite</option>
                         </select>
                     </div>
 
+                    {connectionForm.type === 'sqlite' ? (
+                    <div>
+                        <div className="flex gap-1 mb-3 bg-black/20 p-1 rounded-lg">
+                            <button
+                                type="button"
+                                onClick={() => { setSqliteInputMode('upload'); setConnectionForm({...connectionForm, dbname: ''}); setUploadedFileName(''); }}
+                                className={`flex-1 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                                    sqliteInputMode === 'upload' ? 'bg-primary text-white shadow' : 'text-gray-400 hover:text-white'
+                                }`}
+                            >
+                                📁 Upload File
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => { setSqliteInputMode('url'); setConnectionForm({...connectionForm, dbname: ''}); setUploadedFileName(''); }}
+                                className={`flex-1 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                                    sqliteInputMode === 'url' ? 'bg-primary text-white shadow' : 'text-gray-400 hover:text-white'
+                                }`}
+                            >
+                                🔗 URL / Path
+                            </button>
+                        </div>
+
+                        {sqliteInputMode === 'upload' ? (
+                            <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-1">SQLite Database File</label>
+                                <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-all ${
+                                    connectionForm.dbname && uploadedFileName
+                                        ? 'border-green-500/50 bg-green-500/5' 
+                                        : 'border-white/10 hover:border-primary/50 bg-white/5'
+                                }`}>
+                                    {connectionForm.dbname && uploadedFileName ? (
+                                        <div className="space-y-2">
+                                            <div className="text-green-400 text-2xl">✅</div>
+                                            <p className="text-sm text-green-300 font-medium">{uploadedFileName}</p>
+                                            <p className="text-xs text-gray-500">File uploaded successfully</p>
+                                            <button
+                                                type="button"
+                                                onClick={() => { setConnectionForm({...connectionForm, dbname: ''}); setUploadedFileName(''); }}
+                                                className="text-xs text-red-400 hover:text-red-300 underline"
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-2">
+                                            {isUploadingSqlite ? (
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                                                    <p className="text-sm text-gray-400">Uploading...</p>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <div className="text-gray-500 text-2xl">📂</div>
+                                                    <p className="text-sm text-gray-400">Click to select a SQLite file</p>
+                                                    <label className="inline-block px-4 py-2 bg-primary/20 text-primary rounded-lg text-sm cursor-pointer hover:bg-primary/30 transition-colors">
+                                                        Browse Files
+                                                        <input
+                                                            type="file"
+                                                            accept=".db,.sqlite,.sqlite3,.db3"
+                                                            className="hidden"
+                                                            onChange={async (e) => {
+                                                                const file = e.target.files?.[0];
+                                                                if (!file) return;
+                                                                setIsUploadingSqlite(true);
+                                                                try {
+                                                                    const formData = new FormData();
+                                                                    formData.append('file', file);
+                                                                    const res = await api.post(`/workspaces/${workspaceId}/upload-sqlite`, formData, {
+                                                                        headers: { 'Content-Type': 'multipart/form-data' }
+                                                                    });
+                                                                    if (res.data?.data?.file_path) {
+                                                                        setConnectionForm(prev => ({...prev, dbname: res.data.data.file_path}));
+                                                                        setUploadedFileName(file.name);
+                                                                    }
+                                                                } catch (err) {
+                                                                    console.error('Upload failed', err);
+                                                                    alert('Failed to upload SQLite file');
+                                                                } finally {
+                                                                    setIsUploadingSqlite(false);
+                                                                }
+                                                            }}
+                                                        />
+                                                    </label>
+                                                    <p className="text-xs text-gray-600">Supports: .db, .sqlite, .sqlite3, .db3</p>
+                                                </>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ) : (
+                            <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-1">Database URL / File Path</label>
+                                <input 
+                                    type="text" 
+                                    value={connectionForm.dbname}
+                                    onChange={(e) => setConnectionForm({...connectionForm, dbname: e.target.value})}
+                                    className="glass-input w-full"
+                                    placeholder="/path/to/database.db or https://example.com/data.db"
+                                    required
+                                />
+                                <p className="text-xs text-gray-600 mt-1">Enter a local file path or URL to a SQLite database</p>
+                            </div>
+                        )}
+                    </div>
+                    ) : (
+                    <>
                     <div className="grid grid-cols-3 gap-4">
                         <div className="col-span-2">
                              <label className="block text-sm font-medium text-gray-300 mb-1">Host</label>
@@ -1217,7 +1428,10 @@ const Workspace = () => {
                             />
                         </div>
                     </div>
+                    </>
+                    )}
 
+                    {connectionForm.type !== 'sqlite' && (
                     <div>
                          <label className="block text-sm font-medium text-gray-300 mb-1">Password</label>
                          <input 
@@ -1228,6 +1442,7 @@ const Workspace = () => {
                             placeholder={editingConnection ? "(Unchanged)" : "password"}
                         />
                     </div>
+                    )}
                     
                     <div className="pt-2">
                         <button 

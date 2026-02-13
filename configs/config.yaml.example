@@ -1,6 +1,6 @@
 server:
   host: 0.0.0.0
-  port: 8081
+  port: 4081
   read_timeout: 30s
   write_timeout: 30s
 

@@ -20,7 +20,7 @@ info:
     name: MIT
 
 servers:
-  - url: http://localhost:8081/api/v1
+  - url: http://localhost:4081/api/v1
     description: Development server
 
 tags:

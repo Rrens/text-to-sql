@@ -4,7 +4,7 @@ services:
   app:
     image: rrenss/text-2-sql:latest
     ports:
-      - "4081:4081"
+      - "8080:8080"
     environment:
       - CONFIG_PATH=/app/configs/config.yaml
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-texttosql123}

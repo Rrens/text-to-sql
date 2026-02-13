@@ -7,9 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
-CREATE INDEX idx_users_email ON users(email);
-
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 -- Workspaces table
 CREATE TABLE IF NOT EXISTS workspaces (
     id UUID PRIMARY KEY,
@@ -18,7 +16,6 @@ CREATE TABLE IF NOT EXISTS workspaces (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 -- Workspace members table
 CREATE TABLE IF NOT EXISTS workspace_members (
     workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
@@ -27,9 +24,7 @@ CREATE TABLE IF NOT EXISTS workspace_members (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     PRIMARY KEY (workspace_id, user_id)
 );
-
-CREATE INDEX idx_workspace_members_user ON workspace_members(user_id);
-
+CREATE INDEX IF NOT EXISTS idx_workspace_members_user ON workspace_members(user_id);
 -- Database connections table
 CREATE TABLE IF NOT EXISTS connections (
     id UUID PRIMARY KEY,
@@ -48,9 +43,7 @@ CREATE TABLE IF NOT EXISTS connections (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
-CREATE INDEX idx_connections_workspace ON connections(workspace_id);
-
+CREATE INDEX IF NOT EXISTS idx_connections_workspace ON connections(workspace_id);
 -- Workspace LLM configuration table
 CREATE TABLE IF NOT EXISTS workspace_llm_config (
     workspace_id UUID PRIMARY KEY REFERENCES workspaces(id) ON DELETE CASCADE,
@@ -61,20 +54,20 @@ CREATE TABLE IF NOT EXISTS workspace_llm_config (
     settings JSONB DEFAULT '{}',
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
 -- Audit log table
 CREATE TABLE IF NOT EXISTS audit_log (
     id UUID PRIMARY KEY,
-    workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL,
-    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
-    action VARCHAR(100) NOT NULL,
-    resource_type VARCHAR(100),
-    resource_id UUID,
-    metadata JSONB DEFAULT '{}',
-    ip_address INET,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    workspace_id UUID REFERENCES workspaces(id) ON DELETE
+    SET NULL,
+        user_id UUID REFERENCES users(id) ON DELETE
+    SET NULL,
+        action VARCHAR(100) NOT NULL,
+        resource_type VARCHAR(100),
+        resource_id UUID,
+        metadata JSONB DEFAULT '{}',
+        ip_address INET,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
-CREATE INDEX idx_audit_log_workspace ON audit_log(workspace_id, created_at DESC);
-CREATE INDEX idx_audit_log_user ON audit_log(user_id, created_at DESC);
-CREATE INDEX idx_audit_log_action ON audit_log(action, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_log_workspace ON audit_log(workspace_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_log_user ON audit_log(user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_log_action ON audit_log(action, created_at DESC);

@@ -1,55 +1,61 @@
 # Text-to-SQL Platform Production Configuration
-# Copy this file and customize for your environment
+# All sensitive values should be set via environment variables
 
 server:
-  host: 0.0.0.0
-  port: 8080
-  read_timeout: 30s
-  write_timeout: 30s
+  host: ${SERVER_HOST:0.0.0.0}
+  port: ${SERVER_PORT:8080}
+  read_timeout: ${SERVER_READ_TIMEOUT:60s}
+  write_timeout: ${SERVER_WRITE_TIMEOUT:60s}
+  idle_timeout: ${SERVER_IDLE_TIMEOUT:120s}
+  shutdown_timeout: ${SERVER_SHUTDOWN_TIMEOUT:30s}
 
 database:
-  host: postgres
-  port: 5432
-  user: texttosql
-  password: "" # Set via POSTGRES_PASSWORD env var
-  database: texttosql
-  ssl_mode: disable
-  max_conns: 50
+  host: ${POSTGRES_HOST:postgres}
+  port: ${POSTGRES_PORT:5432}
+  user: ${POSTGRES_USER:texttosql}
+  password: ${POSTGRES_PASSWORD:}
+  database: ${POSTGRES_DB:texttosql}
+  ssl_mode: ${POSTGRES_SSL_MODE:disable}
+  max_conns: ${POSTGRES_MAX_CONNS:50}
   min_conns: 10
 
 redis:
-  host: redis
-  port: 6379
-  password: "" # Set via REDIS_PASSWORD env var
-  db: 0
+  host: ${REDIS_HOST:redis}
+  port: ${REDIS_PORT:6379}
+  password: ${REDIS_PASSWORD:}
+  db: ${REDIS_DB:0}
 
 vault:
-  address: http://vault:8200
-  token: "" # Set via VAULT_TOKEN env var
+  address: ${VAULT_ADDR:http://vault:8200}
+  token: ${VAULT_TOKEN:}
 
 auth:
-  jwt_secret: "" # Set via JWT_SECRET env var (min 32 chars)
-  access_token_ttl: 15m
-  refresh_token_ttl: 168h # 7 days
+  jwt_secret: ${JWT_SECRET:}
+  access_token_ttl: ${ACCESS_TOKEN_TTL:24h}
+  refresh_token_ttl: ${REFRESH_TOKEN_TTL:168h}
 
 llm:
-  default_provider: ollama
+  default_provider: ${LLM_DEFAULT_PROVIDER:ollama}
 
   openai:
-    api_key: "" # Set via OPENAI_API_KEY env var
-    model: gpt-4-turbo
+    api_key: ${OPENAI_API_KEY:}
+    model: ${OPENAI_MODEL:gpt-4-turbo}
 
   anthropic:
-    api_key: "" # Set via ANTHROPIC_API_KEY env var
-    model: claude-3-sonnet-20240229
+    api_key: ${ANTHROPIC_API_KEY:}
+    model: ${ANTHROPIC_MODEL:claude-3-sonnet-20240229}
 
   ollama:
-    host: http://ollama:11434
-    default_model: llama3
+    host: ${OLLAMA_HOST:http://host.docker.internal:11434}
+    default_model: ${OLLAMA_DEFAULT_MODEL:llama3}
 
   deepseek:
-    api_key: "" # Set via DEEPSEEK_API_KEY env var
-    model: deepseek-chat
+    api_key: ${DEEPSEEK_API_KEY:}
+    model: ${DEEPSEEK_MODEL:deepseek-chat}
+
+  gemini:
+    api_key: ${GEMINI_API_KEY:}
+    model: ${GEMINI_MODEL:gemini-1.5-flash}
 
 security:
   read_only_default: true
@@ -60,7 +66,7 @@ security:
     burst: 10
 
 logging:
-  level: info
+  level: ${LOG_LEVEL:info}
   format: json
 
 metrics:

@@ -29,10 +29,12 @@ COPY --from=frontend-builder /app/dist /app/frontend
 
 # Copy configs/migrations for runtime references (if needed by code)
 COPY configs /app/configs
+# Set default config file from production config
+COPY configs/config.production.yaml /app/configs/config.yaml
 COPY migrations /app/migrations
 
 # Environment defaults
 ENV CONFIG_PATH=/app/configs/config.yaml
 
-EXPOSE 4081
+EXPOSE 8080
 CMD ["/app/server"]

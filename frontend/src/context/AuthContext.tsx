@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setToken(storedToken);
         try {
           // Verify token and get user details
-          const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081/api/v1'}/auth/me`, {
+          const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4081/api/v1'}/auth/me`, {
             headers: {
               'Authorization': `Bearer ${storedToken}`
             }

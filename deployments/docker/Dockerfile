@@ -1,36 +1,50 @@
-FROM golang:alpine AS builder
+# Stage 1: Build
+FROM golang:1.22-alpine AS builder
 
 WORKDIR /build
 
-# Install dependencies
+# Install build dependencies
 RUN apk add --no-cache git ca-certificates tzdata
 
-# Copy go mod files
+# Copy go mod files first (for layer caching)
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy source
+# Copy source code
 COPY . .
 
-# Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /app/server ./cmd/server
+# Build with optimizations for smallest binary
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+  -ldflags="-w -s -extldflags '-static'" \
+  -o /app/server ./cmd/server
 
-# Production image
+# Stage 2: Runtime (minimal Alpine image)
 FROM alpine:3.19
 
-RUN apk add --no-cache ca-certificates tzdata
+# Install only essential runtime dependencies
+RUN apk add --no-cache ca-certificates tzdata wget \
+  && rm -rf /var/cache/apk/*
 
 WORKDIR /app
 
-# Create non-root user
-RUN adduser -D -g '' appuser
+# Create non-root user for security
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
+# Copy binary from builder
 COPY --from=builder /app/server .
 
-EXPOSE 4081
+# Copy configs and migrations
+COPY --chown=appuser:appgroup configs /app/configs
+COPY --chown=appuser:appgroup migrations /app/migrations
 
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:4081/api/v1/health || exit 1
+# Environment defaults
+ENV CONFIG_PATH=/app/configs/config.yaml
+
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/v1/health || exit 1
 
 ENTRYPOINT ["./server"]

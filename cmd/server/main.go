@@ -22,14 +22,33 @@ import (
 
 func main() {
 	// ... existing env loading code ...
-	// Load .env file - try multiple locations
-	envPaths := []string{".env", "../.env", "../../.env"}
+	// Determine environment (default: development)
+	appEnv := os.Getenv("APP_ENV")
+	if appEnv == "" {
+		appEnv = "development"
+	}
+
+	// Load .env.{APP_ENV} first, then fallback to .env
+	envFile := fmt.Sprintf(".env.%s", appEnv)
+	envPaths := []string{envFile, "../" + envFile, "../../" + envFile}
+	// Also try generic .env as fallback
+	envFallback := []string{".env", "../.env", "../../.env"}
+
 	envLoaded := false
 	for _, p := range envPaths {
 		if err := godotenv.Load(p); err == nil {
-			fmt.Printf("Loaded .env from: %s\n", p)
+			fmt.Printf("Loaded env from: %s (APP_ENV=%s)\n", p, appEnv)
 			envLoaded = true
 			break
+		}
+	}
+	if !envLoaded {
+		for _, p := range envFallback {
+			if err := godotenv.Load(p); err == nil {
+				fmt.Printf("Loaded env from: %s (fallback, APP_ENV=%s)\n", p, appEnv)
+				envLoaded = true
+				break
+			}
 		}
 	}
 	if !envLoaded {

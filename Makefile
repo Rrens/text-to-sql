@@ -34,12 +34,13 @@ build-all:
 
 ## Run commands
 run: build
-	@echo "Starting server..."
-	./$(BINARY_PATH)
+	@echo "Starting server (development)..."
+	APP_ENV=development ./$(BINARY_PATH)
 
-run-dev:
-	@echo "Starting server in development mode..."
-	CONFIG_PATH=configs/config.local.yaml $(GOCMD) run ./cmd/server
+run-prod: build
+	@echo "Starting server (production)..."
+	APP_ENV=production ./$(BINARY_PATH)
+
 
 ## Test commands
 test:
@@ -48,7 +49,7 @@ test:
 
 test-short:
 	$(GOTEST) -short -count=1 ./...
-
+ 
 test-coverage:
 	@echo "Running tests with coverage..."
 	$(GOTEST) -v -race -coverprofile=coverage.out -covermode=atomic ./...
@@ -147,8 +148,8 @@ help:
 	@echo ""
 	@echo "Targets:"
 	@echo "  build        Build the binary"
-	@echo "  run          Build and run the server"
-	@echo "  run-dev      Run with local config"
+	@echo "  run          Build and run (development)"
+	@echo "  run-prod     Build and run (production)"
 	@echo "  test         Run all tests"
 	@echo "  test-coverage Run tests with coverage"
 	@echo "  lint         Run linters"

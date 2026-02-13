@@ -144,12 +144,20 @@ func Load() (*Config, error) {
 	// Set defaults first
 	setDefaults(v)
 
-	// Read config file first
-	if err := v.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+	// Check if config file exists
+	if _, err := os.Stat(configPath); err != nil {
+		if os.IsNotExist(err) {
+			// Config file not found, use defaults and env vars
+			// This is acceptable for containerized deployments relying on env vars
+			fmt.Printf("Config file %s not found, using environment variables\n", configPath)
+		} else {
+			return nil, fmt.Errorf("failed to check config file: %w", err)
+		}
+	} else {
+		// Read config file if it exists
+		if err := v.ReadInConfig(); err != nil {
 			return nil, fmt.Errorf("failed to read config file: %w", err)
 		}
-		// Config file not found, use defaults and env vars
 	}
 
 	// Enable environment variable override

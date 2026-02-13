@@ -52,6 +52,13 @@ var MysqlBlockedPatterns = []*regexp.Regexp{
 	regexp.MustCompile(`(?i)INTO\s+DUMPFILE`),
 }
 
+// SQLite specific blocked patterns
+var SqliteBlockedPatterns = []*regexp.Regexp{
+	regexp.MustCompile(`(?i)\bATTACH\b`),
+	regexp.MustCompile(`(?i)\bDETACH\b`),
+	regexp.MustCompile(`(?i)load_extension`),
+}
+
 // ValidateSQL validates SQL for safety
 func ValidateSQL(sql string, additionalPatterns []*regexp.Regexp) error {
 	sql = strings.TrimSpace(sql)
