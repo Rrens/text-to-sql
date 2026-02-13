@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -101,9 +100,9 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 	log.Info().Msgf("Initializing LLM providers. Default: %s", cfg.LLM.DefaultProvider)
 
 	// Ollama Factory
-	llmRouter.RegisterFactory("ollama", func(config map[string]any) (llm.Provider, error) {
-		host, _ := config["host"].(string)
-		model, _ := config["model"].(string)
+	llmRouter.RegisterFactory("ollama", func(cfgMap map[string]any) (llm.Provider, error) {
+		host, _ := cfgMap["host"].(string)
+		model, _ := cfgMap["model"].(string)
 		if host == "" {
 			host = cfg.LLM.Ollama.Host
 		}
@@ -114,9 +113,9 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 	})
 
 	// OpenAI Factory
-	llmRouter.RegisterFactory("openai", func(config map[string]any) (llm.Provider, error) {
-		apiKey, _ := config["api_key"].(string)
-		model, _ := config["model"].(string)
+	llmRouter.RegisterFactory("openai", func(cfgMap map[string]any) (llm.Provider, error) {
+		apiKey, _ := cfgMap["api_key"].(string)
+		model, _ := cfgMap["model"].(string)
 		if apiKey == "" {
 			apiKey = cfg.LLM.OpenAI.APIKey
 		}
@@ -127,9 +126,9 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 	})
 
 	// Anthropic Factory
-	llmRouter.RegisterFactory("anthropic", func(config map[string]any) (llm.Provider, error) {
-		apiKey, _ := config["api_key"].(string)
-		model, _ := config["model"].(string)
+	llmRouter.RegisterFactory("anthropic", func(cfgMap map[string]any) (llm.Provider, error) {
+		apiKey, _ := cfgMap["api_key"].(string)
+		model, _ := cfgMap["model"].(string)
 		if apiKey == "" {
 			apiKey = cfg.LLM.Anthropic.APIKey
 		}
@@ -140,9 +139,9 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 	})
 
 	// DeepSeek Factory
-	llmRouter.RegisterFactory("deepseek", func(config map[string]any) (llm.Provider, error) {
-		apiKey, _ := config["api_key"].(string)
-		model, _ := config["model"].(string)
+	llmRouter.RegisterFactory("deepseek", func(cfgMap map[string]any) (llm.Provider, error) {
+		apiKey, _ := cfgMap["api_key"].(string)
+		model, _ := cfgMap["model"].(string)
 		if apiKey == "" {
 			apiKey = cfg.LLM.DeepSeek.APIKey
 		}
@@ -150,6 +149,23 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 			model = cfg.LLM.DeepSeek.Model
 		}
 		return deepseek.NewProvider(apiKey, model), nil
+	})
+
+	// Gemini Factory
+	llmRouter.RegisterFactory("gemini", func(cfgMap map[string]any) (llm.Provider, error) {
+		apiKey, _ := cfgMap["api_key"].(string)
+		model, _ := cfgMap["model"].(string)
+		if apiKey == "" {
+			apiKey = cfg.LLM.Gemini.APIKey
+		}
+		if model == "" {
+			model = cfg.LLM.Gemini.Model
+		}
+		geminiConfig := config.GeminiConfig{
+			APIKey: apiKey,
+			Model:  model,
+		}
+		return gemini.NewProvider(geminiConfig), nil
 	})
 
 	// Register default/system instances
@@ -166,12 +182,10 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 	if cfg.LLM.DeepSeek.APIKey != "" {
 		llmRouter.RegisterProvider(deepseek.NewProvider(cfg.LLM.DeepSeek.APIKey, cfg.LLM.DeepSeek.Model))
 	}
-	if cfg.LLM.Gemini.APIKey != "" {
-		log.Info().Str("key_len", fmt.Sprintf("%d", len(cfg.LLM.Gemini.APIKey))).Msg("Registering Gemini provider")
-		llmRouter.RegisterProvider(gemini.NewProvider(cfg.LLM.Gemini))
-	} else {
-		log.Warn().Msg("Gemini API Key is empty, skipping registration")
-	}
+
+	// Always register Gemini provider (it handles empty keys gracefully)
+	log.Info().Msg("Registering Gemini provider")
+	llmRouter.RegisterProvider(gemini.NewProvider(cfg.LLM.Gemini))
 
 	// Initialize services
 	authService := service.NewAuthService(userRepo, workspaceRepo, jwtManager)
