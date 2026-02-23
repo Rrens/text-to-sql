@@ -23,13 +23,14 @@ func NewUserRepository(db *DB) *UserRepository {
 // Create creates a new user
 func (r *UserRepository) Create(ctx context.Context, user *domain.User) error {
 	query := `
-		INSERT INTO users (id, email, password_hash, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO users (id, email, display_name, password_hash, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6)
 	`
 
 	_, err := r.db.Pool.Exec(ctx, query,
 		user.ID,
 		user.Email,
+		user.DisplayName,
 		user.PasswordHash,
 		user.CreatedAt,
 		user.UpdatedAt,
@@ -44,7 +45,7 @@ func (r *UserRepository) Create(ctx context.Context, user *domain.User) error {
 // GetByID retrieves a user by ID
 func (r *UserRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.User, error) {
 	query := `
-		SELECT id, email, password_hash, created_at, updated_at, COALESCE(llm_config, '{}'::jsonb)
+		SELECT id, email, COALESCE(display_name, ''), password_hash, created_at, updated_at, COALESCE(llm_config, '{}'::jsonb)
 		FROM users
 		WHERE id = $1
 	`
@@ -53,6 +54,7 @@ func (r *UserRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Use
 	err := r.db.Pool.QueryRow(ctx, query, id).Scan(
 		&user.ID,
 		&user.Email,
+		&user.DisplayName,
 		&user.PasswordHash,
 		&user.CreatedAt,
 		&user.UpdatedAt,
@@ -71,7 +73,7 @@ func (r *UserRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Use
 // GetByEmail retrieves a user by email
 func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
 	query := `
-		SELECT id, email, password_hash, created_at, updated_at, COALESCE(llm_config, '{}'::jsonb)
+		SELECT id, email, COALESCE(display_name, ''), password_hash, created_at, updated_at, COALESCE(llm_config, '{}'::jsonb)
 		FROM users
 		WHERE email = $1
 	`
@@ -80,6 +82,7 @@ func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*domain.
 	err := r.db.Pool.QueryRow(ctx, query, email).Scan(
 		&user.ID,
 		&user.Email,
+		&user.DisplayName,
 		&user.PasswordHash,
 		&user.CreatedAt,
 		&user.UpdatedAt,
@@ -112,13 +115,14 @@ func (r *UserRepository) EmailExists(ctx context.Context, email string) (bool, e
 func (r *UserRepository) Update(ctx context.Context, user *domain.User) error {
 	query := `
 		UPDATE users
-		SET email = $2, password_hash = $3, updated_at = $4, llm_config = $5
+		SET email = $2, display_name = $3, password_hash = $4, updated_at = $5, llm_config = $6
 		WHERE id = $1
 	`
 
 	_, err := r.db.Pool.Exec(ctx, query,
 		user.ID,
 		user.Email,
+		user.DisplayName,
 		user.PasswordHash,
 		user.UpdatedAt,
 		user.LLMConfig,

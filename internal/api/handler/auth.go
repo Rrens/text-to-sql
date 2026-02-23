@@ -135,9 +135,10 @@ func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.OK(w, map[string]any{
-		"id":         user.ID,
-		"email":      user.Email,
-		"llm_config": user.LLMConfig,
+		"id":           user.ID,
+		"email":        user.Email,
+		"display_name": user.DisplayName,
+		"llm_config":   user.LLMConfig,
 	})
 }
 
@@ -162,4 +163,33 @@ func (h *AuthHandler) UpdateLLMConfig(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.OK(w, user)
+}
+
+// UpdateProfile updates user's display name
+func (h *AuthHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
+	userID, ok := middleware.GetUserID(r.Context())
+	if !ok {
+		response.Unauthorized(w, "unauthorized")
+		return
+	}
+
+	var input struct {
+		DisplayName string `json:"display_name" validate:"max=255"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		response.BadRequest(w, "invalid request body")
+		return
+	}
+
+	user, err := h.authService.UpdateProfile(r.Context(), userID, input.DisplayName)
+	if err != nil {
+		response.InternalError(w, err.Error())
+		return
+	}
+
+	response.OK(w, map[string]any{
+		"id":           user.ID,
+		"email":        user.Email,
+		"display_name": user.DisplayName,
+	})
 }

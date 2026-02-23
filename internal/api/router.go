@@ -242,6 +242,7 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 			// Auth check
 			r.Get("/auth/me", authHandler.Me)
 			r.Patch("/auth/me/llm-config", authHandler.UpdateLLMConfig)
+			r.Patch("/auth/me/profile", authHandler.UpdateProfile)
 
 			// LLM providers
 			r.Get("/llm-providers", handler.ListLLMProviders(cfg))

@@ -158,7 +158,11 @@ func (s *QueryService) ExecuteQuery(ctx context.Context, userID, workspaceID uui
 
 	// Add user profile context if available
 	if user != nil {
-		llmReq.UserContext = fmt.Sprintf("- Email: %s", user.Email)
+		userCtx := fmt.Sprintf("- Email: %s", user.Email)
+		if user.DisplayName != "" {
+			userCtx = fmt.Sprintf("- Name: %s\n%s", user.DisplayName, userCtx)
+		}
+		llmReq.UserContext = userCtx
 	}
 
 	// DEBUG: Log schema DDL length

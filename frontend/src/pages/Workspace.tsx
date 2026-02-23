@@ -107,6 +107,9 @@ const Workspace = () => {
 
   // LLM Config State
   const { user, login } = useAuth(); // Need login to update user in context
+  const [displayName, setDisplayName] = useState(user?.display_name || '');
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [isProfileSaved, setIsProfileSaved] = useState(false);
   const [llmConfigForm, setLlmConfigForm] = useState({
       ollama_host: '',
       openai_key: '',
@@ -125,14 +128,17 @@ const Workspace = () => {
   }, [isLLMSaved]);
 
   useEffect(() => {
-      if (user?.llm_config) {
+      // Assuming 'meData' is 'user' from useAuth for this context
+      const meData = user; 
+      if (meData?.llm_config) {
           setLlmConfigForm({
-              ollama_host: (user.llm_config.ollama as any)?.host || '',
-              openai_key: (user.llm_config.openai as any)?.api_key || '',
-              anthropic_key: (user.llm_config.anthropic as any)?.api_key || '',
-              deepseek_key: (user.llm_config.deepseek as any)?.api_key || '',
-              gemini_key: (user.llm_config.gemini as any)?.api_key || ''
+              ollama_host: (meData.llm_config?.ollama as { host?: string })?.host || '',
+              openai_key: (meData.llm_config?.openai as { api_key?: string })?.api_key || '',
+              anthropic_key: (meData.llm_config?.anthropic as { api_key?: string })?.api_key || '',
+              deepseek_key: (meData.llm_config?.deepseek as { api_key?: string })?.api_key || '',
+              gemini_key: (meData.llm_config?.gemini as { api_key?: string })?.api_key || ''
           });
+          setDisplayName(meData.display_name || '');
       }
   }, [user]);
 
@@ -1107,6 +1113,53 @@ const Workspace = () => {
                         <h2 className="text-2xl font-bold mb-6">Workspace Settings</h2>
                         
                         <div className="glass-card p-6 space-y-6">
+                            <section>
+                                <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
+                                    <User className="w-5 h-5 text-primary" />
+                                    Profile
+                                </h3>
+                                <form onSubmit={async (e) => {
+                                    e.preventDefault();
+                                    setIsSavingProfile(true);
+                                    try {
+                                        await userService.updateProfile(displayName);
+                                        setIsProfileSaved(true);
+                                        setTimeout(() => setIsProfileSaved(false), 2000);
+                                    } catch (err) {
+                                        console.error('Failed to update profile', err);
+                                    } finally {
+                                        setIsSavingProfile(false);
+                                    }
+                                }} className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-300 mb-1">Display Name</label>
+                                        <p className="text-xs text-gray-500 mb-2">This name will be used by the AI assistant to personalize responses.</p>
+                                        <div className="flex gap-2">
+                                            <input 
+                                                type="text" 
+                                                value={displayName}
+                                                onChange={(e) => setDisplayName(e.target.value)}
+                                                className="glass-input flex-1"
+                                                placeholder="Your name"
+                                            />
+                                            <button type="submit" className={clsx("btn-primary transition-all duration-300", isProfileSaved && "bg-green-600 hover:bg-green-700")} disabled={isSavingProfile}>
+                                                {isSavingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : (isProfileSaved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />)}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                                        <input 
+                                            type="text" 
+                                            value={user?.email || ''}
+                                            className="glass-input flex-1 w-full opacity-60 cursor-not-allowed"
+                                            disabled
+                                        />
+                                    </div>
+                                </form>
+                            </section>
+
+                            <div className="border-t border-white/10 my-6"></div>
                             <section>
                                 <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
                                     <Settings className="w-5 h-5 text-primary" />

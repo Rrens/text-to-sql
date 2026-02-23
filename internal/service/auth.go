@@ -173,3 +173,23 @@ func (s *AuthService) UpdateLLMConfig(ctx context.Context, userID uuid.UUID, con
 
 	return user, nil
 }
+
+// UpdateProfile updates user's display name
+func (s *AuthService) UpdateProfile(ctx context.Context, userID uuid.UUID, displayName string) (*domain.User, error) {
+	user, err := s.userRepo.GetByID(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user: %w", err)
+	}
+	if user == nil {
+		return nil, errors.New("user not found")
+	}
+
+	user.DisplayName = displayName
+	user.UpdatedAt = time.Now()
+
+	if err := s.userRepo.Update(ctx, user); err != nil {
+		return nil, fmt.Errorf("failed to update profile: %w", err)
+	}
+
+	return user, nil
+}

@@ -1,6 +1,7 @@
 export interface User {
   id: string;
   email: string;
+  display_name?: string;
   llm_config?: Record<string, any>;
 }
 
