@@ -59,6 +59,19 @@ var SqliteBlockedPatterns = []*regexp.Regexp{
 	regexp.MustCompile(`(?i)load_extension`),
 }
 
+// SQL Server specific blocked patterns
+var SqlserverBlockedPatterns = []*regexp.Regexp{
+	regexp.MustCompile(`(?i)xp_cmdshell`),
+	regexp.MustCompile(`(?i)sp_OACreate`),
+	regexp.MustCompile(`(?i)\bOPENROWSET\b`),
+	regexp.MustCompile(`(?i)\bOPENDATASOURCE\b`),
+	regexp.MustCompile(`(?i)\bBULK\s+INSERT\b`),
+	regexp.MustCompile(`(?i)xp_regread`),
+	regexp.MustCompile(`(?i)sp_configure`),
+	regexp.MustCompile(`(?i)xp_fileexist`),
+	regexp.MustCompile(`(?i)xp_dirtree`),
+}
+
 // ValidateSQL validates SQL for safety
 func ValidateSQL(sql string, additionalPatterns []*regexp.Regexp) error {
 	sql = strings.TrimSpace(sql)

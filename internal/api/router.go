@@ -20,6 +20,7 @@ import (
 	mcpMySQL "github.com/Rrens/text-to-sql/internal/mcp/mysql"
 	mcpPostgres "github.com/Rrens/text-to-sql/internal/mcp/postgres"
 	mcpSQLite "github.com/Rrens/text-to-sql/internal/mcp/sqlite"
+	mcpSQLServer "github.com/Rrens/text-to-sql/internal/mcp/sqlserver"
 	"github.com/Rrens/text-to-sql/internal/repository/postgres"
 	"github.com/Rrens/text-to-sql/internal/repository/redis"
 	"github.com/Rrens/text-to-sql/internal/security"
@@ -92,6 +93,7 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 	mcpRouter.RegisterAdapter("mysql", mcpMySQL.NewAdapter)
 	mcpRouter.RegisterAdapter("mongodb", mcpMongo.NewAdapter)
 	mcpRouter.RegisterAdapter("sqlite", mcpSQLite.NewAdapter)
+	mcpRouter.RegisterAdapter("sqlserver", mcpSQLServer.NewAdapter)
 
 	// Initialize LLM Router with providers
 	llmRouter := llm.NewRouter(cfg.LLM.DefaultProvider)

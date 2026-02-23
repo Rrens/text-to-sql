@@ -149,6 +149,7 @@ const Workspace = () => {
           };
           const updatedUser = await userService.updateLLMConfig(config);
           // Update user in context (we need token, assume it's same)
+          const token = localStorage.getItem('token');
           if (token && updatedUser && updatedUser.data) {
               login(token, updatedUser.data);
           }
@@ -1268,6 +1269,7 @@ const Workspace = () => {
                                 else if (type === 'clickhouse') port = '8123';
                                 else if (type === 'mongodb') port = '27017';
                                 else if (type === 'sqlite') port = '0';
+                                else if (type === 'sqlserver') port = '1433';
                                 setConnectionForm({...connectionForm, type, port});
                             }}
                             className="glass-input w-full bg-[#11141d] cursor-pointer" // Force dark bg for select
@@ -1277,6 +1279,7 @@ const Workspace = () => {
                             <option value="clickhouse">ClickHouse</option>
                             <option value="mongodb">MongoDB</option>
                             <option value="sqlite">SQLite</option>
+                            <option value="sqlserver">SQL Server</option>
                         </select>
                     </div>
 
