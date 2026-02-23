@@ -94,8 +94,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ../../migrations:/docker-entrypoint-initdb.d:ro
     ports:
-      # Expose only to localhost for debugging, or remove if not needed
-      - "127.0.0.1:${POSTGRES_EXTERNAL_PORT:-55432}:5432"
+      - "${POSTGRES_EXTERNAL_PORT:-55432}:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-texttosql} -d ${POSTGRES_DB:-texttosql}"]
       interval: 5s
