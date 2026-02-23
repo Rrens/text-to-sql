@@ -35,6 +35,11 @@ func BuildPrompt(req Request) string {
 		historyStr = sb.String()
 	}
 
+	userContextStr := ""
+	if req.UserContext != "" {
+		userContextStr = fmt.Sprintf("\n\nUser Profile:\n%s", req.UserContext)
+	}
+
 	return fmt.Sprintf(`You are an expert SQL query generator for %s databases, but you are also a helpful assistant.
 	
 %s
@@ -54,14 +59,15 @@ Rules:
    SELECT ...
    `+"```"+`
 5. If you cannot answer the question based on the schema, explain why.
-
+6. You know the user's profile information. If they ask about themselves, use this data to respond.
+%s
 Database Schema:
 %s
 %s
 %s
 Question: %s
 
-Response:`, req.DatabaseType, req.SQLDialect, req.SchemaDDL, examplesStr, historyStr, req.Question)
+Response:`, req.DatabaseType, req.SQLDialect, userContextStr, req.SchemaDDL, examplesStr, historyStr, req.Question)
 }
 
 // ExtractSQL extracts SQL from LLM response

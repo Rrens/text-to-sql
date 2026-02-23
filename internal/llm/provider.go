@@ -14,6 +14,7 @@ type Request struct {
 	DatabaseType string
 	Examples     []Example
 	History      []domain.Message
+	UserContext  string // User profile info (name, email) for personalized responses
 }
 
 // Example represents a question-SQL pair for few-shot learning
