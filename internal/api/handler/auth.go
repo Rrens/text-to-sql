@@ -64,8 +64,9 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Created(w, map[string]any{
-		"id":    user.ID,
-		"email": user.Email,
+		"id":           user.ID,
+		"email":        user.Email,
+		"display_name": user.DisplayName,
 	})
 }
 

@@ -19,6 +19,7 @@ type User struct {
 
 // UserCreate represents user registration data
 type UserCreate struct {
+	Name     string `json:"name" validate:"max=255"`
 	Email    string `json:"email" validate:"required,email,max=255"`
 	Password string `json:"password" validate:"required,min=8,max=72"`
 }

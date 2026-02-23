@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
-import { Lock, Mail, Loader2, UserPlus } from 'lucide-react';
+import { Lock, Mail, Loader2, UserPlus, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Register = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,7 +18,7 @@ const Register = () => {
     setError('');
 
     try {
-      const response = await api.post('/auth/register', { email, password });
+      const response = await api.post('/auth/register', { name, email, password });
       
       if (response.data.success) {
         // Registration successful, redirect to login
@@ -58,6 +59,20 @@ const Register = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-300 ml-1">Name</label>
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="glass-input w-full px-4 pl-14 py-3.5 border-white/20 focus:border-primary/50 transition-colors"
+                placeholder="Your name"
+              />
+            </div>
+          </div>
+
           <div className="space-y-1">
             <label className="text-sm font-medium text-gray-300 ml-1">Email</label>
             <div className="relative">

@@ -55,6 +55,7 @@ func (s *AuthService) Register(ctx context.Context, input domain.UserCreate) (*d
 	user := &domain.User{
 		ID:           uuid.New(),
 		Email:        input.Email,
+		DisplayName:  input.Name,
 		PasswordHash: string(hashedPassword),
 		CreatedAt:    now,
 		UpdatedAt:    now,
