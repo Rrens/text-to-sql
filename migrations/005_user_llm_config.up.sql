@@ -1,1 +1,2 @@
-ALTER TABLE users ADD COLUMN llm_config JSONB DEFAULT '{}'::jsonb;
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS llm_config JSONB DEFAULT '{}'::jsonb;
