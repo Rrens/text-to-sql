@@ -232,6 +232,7 @@ func NewRouter(cfg *config.Config, db *postgres.DB, redisClient *redis.Client) h
 			r.Post("/register", authHandler.Register)
 			r.Post("/login", authHandler.Login)
 			r.Post("/refresh", authHandler.Refresh)
+			r.Post("/google", authHandler.GoogleLogin)
 		})
 
 		// Protected routes

@@ -30,6 +30,11 @@ type UserLogin struct {
 	Password string `json:"password" validate:"required"`
 }
 
+// UserGoogleLogin represents Google OAuth login request payload
+type UserGoogleLogin struct {
+	Credential string `json:"credential" validate:"required"`
+}
+
 // TokenPair represents JWT token pair
 type TokenPair struct {
 	AccessToken  string `json:"access_token"`

@@ -4,6 +4,8 @@ import Login from './pages/Login.tsx';
 import Register from './pages/Register.tsx';
 import Dashboard from './pages/Dashboard.tsx';
 import Workspace from './pages/Workspace.tsx';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import packageJson from '../package.json';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -51,31 +53,37 @@ import { Linkedin } from 'lucide-react';
 /* ... imports ... */
 
 function App() {
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+
   return (
-    <AuthProvider>
-      <Router>
-        <div className="min-h-screen bg-background text-white font-sans flex flex-col">
-          <div className="flex-1">
-            <AppRoutes />
-          </div>
-          <footer className="py-6 border-t border-white/10 bg-black/20 backdrop-blur-sm">
-            <div className="max-w-6xl mx-auto px-6 flex items-center justify-center gap-2 text-sm text-gray-400">
-              <span>Made by Rendy Yusuf</span>
-              <span>•</span>
-              <a 
-                href="https://www.linkedin.com/in/rendy-yusuf/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 hover:text-primary transition-colors hover:underline"
-              >
-                <Linkedin className="w-3 h-3" />
-                LinkedIn
-              </a>
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <AuthProvider>
+        <Router>
+          <div className="min-h-screen bg-background text-white font-sans flex flex-col">
+            <div className="flex-1">
+              <AppRoutes />
             </div>
-          </footer>
-        </div>
-      </Router>
-    </AuthProvider>
+            <footer className="py-6 border-t border-white/10 bg-black/20 backdrop-blur-sm">
+              <div className="max-w-6xl mx-auto px-6 flex items-center justify-center gap-2 text-sm text-gray-400">
+                <span>Made by Rendy Yusuf</span>
+                <span>•</span>
+                <a 
+                  href="https://www.linkedin.com/in/rendy-yusuf/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 hover:text-primary transition-colors hover:underline"
+                >
+                  <Linkedin className="w-3 h-3" />
+                  LinkedIn
+                </a>
+                <span>•</span>
+                <span>v{packageJson.version}</span>
+              </div>
+            </footer>
+          </div>
+        </Router>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   );
 }
 

@@ -117,6 +117,28 @@ func (h *AuthHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 	response.OK(w, tokens)
 }
 
+// GoogleLogin handles user login via Google OAuth
+func (h *AuthHandler) GoogleLogin(w http.ResponseWriter, r *http.Request) {
+	var input domain.UserGoogleLogin
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		response.BadRequest(w, "invalid request body")
+		return
+	}
+
+	if err := validate.Struct(input); err != nil {
+		response.BadRequest(w, err.Error())
+		return
+	}
+
+	tokens, err := h.authService.GoogleLogin(r.Context(), input.Credential)
+	if err != nil {
+		response.Unauthorized(w, err.Error())
+		return
+	}
+
+	response.OK(w, tokens)
+}
+
 // Me returns the current authenticated user
 func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 	userID, ok := middleware.GetUserID(r.Context())

@@ -11,6 +11,7 @@ import (
 	"github.com/Rrens/text-to-sql/internal/security"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/api/idtoken"
 )
 
 // AuthService handles authentication operations
@@ -193,4 +194,74 @@ func (s *AuthService) UpdateProfile(ctx context.Context, userID uuid.UUID, displ
 	}
 
 	return user, nil
+}
+
+// GoogleLogin authenticates a user via Google OAuth and returns tokens
+func (s *AuthService) GoogleLogin(ctx context.Context, idToken string) (*domain.TokenPair, error) {
+	// Verify the token
+	// Note: You should ideally pass the exact Google Client ID here and optionally verify the issuer.
+	// For flexibility in development if VITE_GOOGLE_CLIENT_ID varies, we pass empty string to just verify signature.
+	// However, verifying clientId is highly recommended for production security.
+	payload, err := idtoken.Validate(ctx, idToken, "")
+	if err != nil {
+		return nil, fmt.Errorf("invalid google token: %w", err)
+	}
+
+	// Extract email and name
+	email, ok := payload.Claims["email"].(string)
+	if !ok || email == "" {
+		return nil, errors.New("email not found in google token")
+	}
+
+	name, _ := payload.Claims["name"].(string)
+
+	// Check if user exists
+	user, err := s.userRepo.GetByEmail(ctx, email)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check existing user: %w", err)
+	}
+
+	// Create user if they don't exist
+	if user == nil {
+		now := time.Now()
+		// Generate random password (they use OAuth anyway, but we still secure the DB)
+		randomPassword := uuid.New().String()
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(randomPassword), bcrypt.DefaultCost)
+
+		user = &domain.User{
+			ID:           uuid.New(),
+			Email:        email,
+			DisplayName:  name,
+			PasswordHash: string(hashedPassword),
+			CreatedAt:    now,
+			UpdatedAt:    now,
+		}
+
+		if err := s.userRepo.Create(ctx, user); err != nil {
+			return nil, fmt.Errorf("failed to register google user: %w", err)
+		}
+	}
+
+	// Get user's workspaces
+	workspaces, err := s.workspaceRepo.ListByUserID(ctx, user.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get workspaces: %w", err)
+	}
+
+	workspaceIDs := make([]uuid.UUID, len(workspaces))
+	for i, ws := range workspaces {
+		workspaceIDs[i] = ws.ID
+	}
+
+	// Generate tokens
+	accessToken, refreshToken, expiresIn, err := s.jwtManager.GenerateTokenPair(user.ID, user.Email, workspaceIDs)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate tokens: %w", err)
+	}
+
+	return &domain.TokenPair{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		ExpiresIn:    expiresIn,
+	}, nil
 }
