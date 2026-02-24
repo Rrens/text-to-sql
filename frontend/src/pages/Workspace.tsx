@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { userService } from '../services/user';
@@ -106,7 +106,7 @@ const Workspace = () => {
     localStorage.getItem('mcp_last_provider') || 'gemini'
   );
   const [selectedModel, setSelectedModel] = useState<string>(
-    localStorage.getItem('mcp_last_model') || 'gemini-1.5-flash'
+    localStorage.getItem('mcp_last_model') || 'gemini-2.5-flash'
   );
 
   // LLM Config State
@@ -123,6 +123,16 @@ const Workspace = () => {
   });
   const [isSavingLLM, setIsSavingLLM] = useState(false);
   const [isLLMSaved, setIsLLMSaved] = useState(false);
+
+  const availableProviders = useMemo(() => {
+      if (!providers) return [];
+      return providers.filter(p => {
+          if (p.name === 'ollama') {
+              return (user?.llm_config?.ollama as any)?.host || p.configured;
+          }
+          return (user?.llm_config?.[p.name as keyof typeof user.llm_config] as any)?.api_key || p.configured;
+      });
+  }, [providers, user?.llm_config]);
 
   useEffect(() => {
     if (isLLMSaved) {
@@ -185,7 +195,7 @@ const Workspace = () => {
     localStorage.setItem('mcp_last_provider', selectedProvider);
 
     // Reset model when provider changes (if old model not in new provider's list)
-    const provider = providers.find(p => p.name === selectedProvider);
+    const provider = availableProviders.find(p => p.name === selectedProvider);
     if (provider && provider.models.length > 0) {
         if (!provider.models.includes(selectedModel)) {
             const newModel = provider.models[0];
@@ -193,7 +203,7 @@ const Workspace = () => {
             localStorage.setItem('mcp_last_model', newModel);
         }
     }
-  }, [selectedProvider, providers, selectedModel]);
+  }, [selectedProvider, availableProviders, selectedModel]);
 
   useEffect(() => {
       // Save model to local storage whenever it changes independently
@@ -711,10 +721,10 @@ const Workspace = () => {
                         value={selectedProvider}
                         onChange={(e) => setSelectedProvider(e.target.value)}
                         >
-                        {providers.map(p => (
+                        {availableProviders.map(p => (
                             <option key={p.name} value={p.name} className="bg-surface">{p.name}</option>
                         ))}
-                            {providers.length === 0 && <option value="gemini">gemini</option>}
+                            {availableProviders.length === 0 && <option value="gemini">gemini</option>}
                         </select>
                     </div>
                     
@@ -727,10 +737,10 @@ const Workspace = () => {
                         value={selectedModel}
                         onChange={(e) => setSelectedModel(e.target.value)}
                         >
-                            {providers.find(p => p.name === selectedProvider)?.models.map((m: string) => (
+                            {availableProviders.find(p => p.name === selectedProvider)?.models.map((m: string) => (
                                 <option key={m} value={m} className="bg-surface">{m}</option>
                             ))}
-                            {(!providers.find(p => p.name === selectedProvider)?.models) && <option value="gemini-1.5-flash">Default</option>}
+                            {(!availableProviders.find(p => p.name === selectedProvider)?.models) && <option value="gemini-2.5-flash">Default</option>}
                         </select>
                     </div>
                     </>
