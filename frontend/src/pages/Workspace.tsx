@@ -102,8 +102,12 @@ const Workspace = () => {
 
   // LLM State
   const [providers, setProviders] = useState<any[]>([]);
-  const [selectedProvider, setSelectedProvider] = useState<string>('ollama');
-  const [selectedModel, setSelectedModel] = useState<string>('qwen2.5-coder:7b');
+  const [selectedProvider, setSelectedProvider] = useState<string>(
+    localStorage.getItem('mcp_last_provider') || 'gemini'
+  );
+  const [selectedModel, setSelectedModel] = useState<string>(
+    localStorage.getItem('mcp_last_model') || 'gemini-1.5-flash'
+  );
 
   // LLM Config State
   const { user, login } = useAuth(); // Need login to update user in context
@@ -177,14 +181,26 @@ const Workspace = () => {
   }, [workspaceId]);
 
   useEffect(() => {
-    // Reset model when provider changes
+    // Save to local storage whenever provider changes
+    localStorage.setItem('mcp_last_provider', selectedProvider);
+
+    // Reset model when provider changes (if old model not in new provider's list)
     const provider = providers.find(p => p.name === selectedProvider);
     if (provider && provider.models.length > 0) {
         if (!provider.models.includes(selectedModel)) {
-            setSelectedModel(provider.models[0]);
+            const newModel = provider.models[0];
+            setSelectedModel(newModel);
+            localStorage.setItem('mcp_last_model', newModel);
         }
     }
-  }, [selectedProvider, providers]);
+  }, [selectedProvider, providers, selectedModel]);
+
+  useEffect(() => {
+      // Save model to local storage whenever it changes independently
+      if (selectedModel) {
+          localStorage.setItem('mcp_last_model', selectedModel);
+      }
+  }, [selectedModel]);
 
   useEffect(() => {
     scrollToBottom();
@@ -239,8 +255,11 @@ const Workspace = () => {
       const res = await api.get('/llm-providers');
       if (res.data.success) {
         setProviders(res.data.data.providers);
-        if (res.data.data.default_provider) {
+        // Only use backend default if we don't have a saved one
+        const savedProvider = localStorage.getItem('mcp_last_provider');
+        if (!savedProvider && res.data.data.default_provider) {
              setSelectedProvider(res.data.data.default_provider);
+             localStorage.setItem('mcp_last_provider', res.data.data.default_provider);
         }
       }
     } catch (err) {
@@ -695,7 +714,7 @@ const Workspace = () => {
                         {providers.map(p => (
                             <option key={p.name} value={p.name} className="bg-surface">{p.name}</option>
                         ))}
-                            {providers.length === 0 && <option value="ollama">ollama</option>}
+                            {providers.length === 0 && <option value="gemini">gemini</option>}
                         </select>
                     </div>
                     
@@ -711,7 +730,7 @@ const Workspace = () => {
                             {providers.find(p => p.name === selectedProvider)?.models.map((m: string) => (
                                 <option key={m} value={m} className="bg-surface">{m}</option>
                             ))}
-                            {(!providers.find(p => p.name === selectedProvider)?.models) && <option value="qwen2.5-coder:7b">Default</option>}
+                            {(!providers.find(p => p.name === selectedProvider)?.models) && <option value="gemini-1.5-flash">Default</option>}
                         </select>
                     </div>
                     </>
