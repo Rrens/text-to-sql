@@ -604,41 +604,12 @@ const Workspace = () => {
   }
 
   return (
-    <div className="h-screen bg-background flex overflow-hidden">
-        {/* Sidebar (Desktop) */}
-        <div className={clsx(
-            "fixed inset-y-0 left-0 z-30 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0",
-            showSidebar ? "translate-x-0" : "-translate-x-full",
-            "md:w-64 shrink-0"
-        )}>
-            <Sidebar 
-                sessions={sessions}
-                currentSessionId={currentSessionId}
-                onSelectSession={(id) => {
-                    handleSelectSession(id);
-                    if (window.innerWidth < 768) setShowSidebar(false);
-                }}
-                onNewChat={() => {
-                   handleNewChat();
-                   if (window.innerWidth < 768) setShowSidebar(false);
-                }}
-                onDeleteSession={handleDeleteSession}
-                isLoading={isLoadingSessions}
-            />
-        </div>
-
-        {/* Sidebar Overlay (Mobile) */}
-        {showSidebar && (
-            <div 
-                className="fixed inset-0 bg-black/50 z-20 md:hidden"
-                onClick={() => setShowSidebar(false)}
-            />
-        )}
-      
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-        {/* Header */}
-        <header className="h-16 border-b border-white/10 flex items-center justify-between px-6 bg-surface/50 backdrop-blur shrink-0 z-10">
+    <div 
+        className="h-[100dvh] w-full bg-background flex flex-col overflow-hidden"
+        style={{ paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+    >
+        {/* Header - Always on top, full width */}
+        <header className="shrink-0 h-16 border-b border-white/10 flex items-center justify-between px-6 bg-surface/90 backdrop-blur-md z-50 w-full relative">
             <div className="flex items-center gap-4">
                 <button 
                     onClick={() => setShowSidebar(!showSidebar)}
@@ -664,36 +635,36 @@ const Workspace = () => {
                 <button 
                     onClick={() => setActiveTab('chat')}
                     className={clsx(
-                        "px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2",
+                        "px-3 md:px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2",
                         activeTab === 'chat' ? "bg-primary text-white shadow-lg" : "text-gray-400 hover:text-white hover:bg-white/5"
                     )}
                 >
                     <MessageSquare className="w-4 h-4" />
-                    Chat
+                    <span className="hidden md:inline">Chat</span>
                 </button>
                 <button 
                     onClick={() => setActiveTab('connections')}
                     className={clsx(
-                        "px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2",
+                        "px-3 md:px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2",
                         activeTab === 'connections' ? "bg-primary text-white shadow-lg" : "text-gray-400 hover:text-white hover:bg-white/5"
                     )}
                 >
                     <Database className="w-4 h-4" />
-                    Connections
+                    <span className="hidden md:inline">Connections</span>
                 </button>
                 <button 
                     onClick={() => setActiveTab('settings')}
                     className={clsx(
-                        "px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2",
+                        "px-3 md:px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2",
                         activeTab === 'settings' ? "bg-primary text-white shadow-lg" : "text-gray-400 hover:text-white hover:bg-white/5"
                     )}
                 >
                     <Settings className="w-4 h-4" />
-                    Settings
+                    <span className="hidden md:inline">Settings</span>
                 </button>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="hidden lg:flex items-center gap-4">
                 {activeTab === 'chat' && (
                     <>
                     <div className="flex items-center gap-2 bg-black/20 p-1 pr-3 rounded-lg border border-white/5">
@@ -748,8 +719,39 @@ const Workspace = () => {
             </div>
         </header>
 
-        {/* Main Content */}
-        <main className="flex-1 overflow-y-auto bg-background/50 scroll-smooth relative">
+        {/* Lower Content Wrapper */}
+        <div className="flex-1 flex flex-row overflow-hidden relative z-0">
+            {/* Sidebar (Desktop & Mobile) */}
+            <div className={clsx(
+                "absolute inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 w-64 shrink-0 shadow-2xl md:shadow-none",
+                showSidebar ? "translate-x-0" : "-translate-x-full"
+            )}>
+                <Sidebar 
+                    sessions={sessions}
+                    currentSessionId={currentSessionId}
+                    onSelectSession={(id) => {
+                        handleSelectSession(id);
+                        if (window.innerWidth < 768) setShowSidebar(false);
+                    }}
+                    onNewChat={() => {
+                       handleNewChat();
+                       if (window.innerWidth < 768) setShowSidebar(false);
+                    }}
+                    onDeleteSession={handleDeleteSession}
+                    isLoading={isLoadingSessions}
+                />
+            </div>
+
+            {/* Sidebar Overlay (Mobile) */}
+            {showSidebar && (
+                <div 
+                    className="absolute inset-0 bg-black/60 z-30 md:hidden backdrop-blur-sm"
+                    onClick={() => setShowSidebar(false)}
+                />
+            )}
+
+            {/* Main Content */}
+            <main className="flex-1 overflow-y-auto bg-background/50 scroll-smooth relative">
             <AnimatePresence mode="wait">
                 
                 {/* CHAT TAB */}
@@ -773,7 +775,7 @@ const Workspace = () => {
                                         Ask questions about your data in plain English. I'll translate them to SQL and show you the results.
                                     </p>
                                     
-                                    <div className="grid grid-cols-2 gap-4 mt-8 w-full max-w-lg">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-8 w-full max-w-lg">
                                         {suggestions.map((suggestion, i) => (
                                         <button 
                                             key={i}
@@ -804,7 +806,7 @@ const Workspace = () => {
                                             </div>
 
                                             <div className={clsx(
-                                            "max-w-[85%] space-y-4",
+                                            "max-w-[95%] md:max-w-[85%] space-y-4",
                                             msg.role === 'user' ? "bg-primary text-white p-4 rounded-2xl rounded-tr-sm" : "w-full"
                                             )}>
                                             {msg.role === 'user' ? (
@@ -955,23 +957,38 @@ const Workspace = () => {
                         {/* Input Area */}
                         <div className="p-4 bg-background border-t border-white/10 shrink-0">
                             <form onSubmit={handleChatSubmit} className="max-w-4xl mx-auto relative">
-                            <input
-                                type="text"
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                placeholder="Ask a question about your data..."
-                                className="w-full bg-surface border border-white/10 rounded-xl px-4 py-4 pr-14 focus:outline-none focus:ring-2 focus:ring-primary/50 text-white placeholder-gray-500 shadow-xl"
-                                disabled={loading}
-                            />
-                            <button 
-                                type="submit" 
-                                disabled={!input.trim() || loading}
-                                className="absolute right-2 top-2 p-2 bg-primary hover:bg-blue-600 disabled:opacity-50 disabled:hover:bg-primary text-white rounded-lg transition-colors"
-                            >
-                                <Send className="w-5 h-5" />
-                            </button>
+                                <input
+                                    type="text"
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    placeholder="Ask a question about your data..."
+                                    className="w-full bg-surface border border-white/10 rounded-xl px-4 py-4 pr-14 focus:outline-none focus:ring-2 focus:ring-primary/50 text-white placeholder-gray-500 shadow-xl"
+                                    disabled={loading}
+                                />
+                                <button 
+                                    type="submit" 
+                                    disabled={!input.trim() || loading}
+                                    className="absolute right-2 top-2 p-2 bg-primary hover:bg-blue-600 disabled:opacity-50 disabled:hover:bg-primary text-white rounded-lg transition-colors"
+                                >
+                                    <Send className="w-5 h-5" />
+                                </button>
                             </form>
-                            <p className="text-center text-xs text-gray-600 mt-2">
+                            
+                            {/* Mobile Connection/Model Info */}
+                            <div className="lg:hidden mt-3 flex flex-wrap gap-2 justify-center">
+                                <div className="flex items-center gap-1 text-[10px] bg-black/20 px-2 py-1 rounded text-gray-400 border border-white/5">
+                                    <Database className="w-3 h-3" />
+                                    <span className="truncate max-w-[80px]">
+                                        {connections.find(c => c.id === selectedConnection)?.name || 'No DB'}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-1 text-[10px] bg-black/20 px-2 py-1 rounded text-gray-400 border border-white/5">
+                                    <Sparkles className="w-3 h-3 text-purple-400" />
+                                    <span className="truncate max-w-[80px]">{selectedModel}</span>
+                                </div>
+                            </div>
+
+                            <p className="hidden md:block text-center text-xs text-gray-600 mt-2">
                                 Connected to {connections.length > 0 ? (connections.find(c => c.id === selectedConnection)?.name || 'Database') : 'No Database'} | AI Model: {selectedModel}
                                 {' | '}
                                 {selectedProvider === 'ollama' ? (
