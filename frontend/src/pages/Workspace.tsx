@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { fetchAvailableModels } from '../services/llmModels';
 import api from '../services/api';
 import { userService } from '../services/user';
 import { useAuth } from '../context/AuthContext';
@@ -108,6 +109,7 @@ const Workspace = () => {
   const [selectedModel, setSelectedModel] = useState<string>(
     localStorage.getItem('mcp_last_model') || 'gemini-2.5-flash'
   );
+  const [dynamicModels, setDynamicModels] = useState<Record<string, string[]>>({});
 
   // LLM Config State
   const { user, login } = useAuth(); // Need login to update user in context
@@ -133,6 +135,27 @@ const Workspace = () => {
           return (user?.llm_config?.[p.name as keyof typeof user.llm_config] as any)?.api_key || p.configured;
       });
   }, [providers, user?.llm_config]);
+
+  useEffect(() => {
+      const loadModels = async () => {
+          if (!selectedProvider) return;
+          
+          const providerData = availableProviders.find(p => p.name === selectedProvider);
+          if (!providerData) return;
+
+          let apiKeyOrHost = '';
+          if (selectedProvider === 'ollama') {
+              apiKeyOrHost = (user?.llm_config?.ollama as any)?.host || providerData.host;
+          } else {
+              apiKeyOrHost = (user?.llm_config?.[selectedProvider as keyof typeof user.llm_config] as any)?.api_key;
+          }
+
+          const models = await fetchAvailableModels(selectedProvider, apiKeyOrHost, providerData.models);
+          setDynamicModels(prev => ({ ...prev, [selectedProvider]: models }));
+      };
+
+      loadModels();
+  }, [selectedProvider, availableProviders, user?.llm_config]);
 
   useEffect(() => {
     if (isLLMSaved) {
@@ -195,15 +218,15 @@ const Workspace = () => {
     localStorage.setItem('mcp_last_provider', selectedProvider);
 
     // Reset model when provider changes (if old model not in new provider's list)
-    const provider = availableProviders.find(p => p.name === selectedProvider);
-    if (provider && provider.models.length > 0) {
-        if (!provider.models.includes(selectedModel)) {
-            const newModel = provider.models[0];
+    const models = dynamicModels[selectedProvider] || availableProviders.find(p => p.name === selectedProvider)?.models || [];
+    if (models.length > 0) {
+        if (!models.includes(selectedModel)) {
+            const newModel = models[0];
             setSelectedModel(newModel);
             localStorage.setItem('mcp_last_model', newModel);
         }
     }
-  }, [selectedProvider, availableProviders, selectedModel]);
+  }, [selectedProvider, dynamicModels, availableProviders, selectedModel]);
 
   useEffect(() => {
       // Save model to local storage whenever it changes independently
@@ -737,10 +760,10 @@ const Workspace = () => {
                         value={selectedModel}
                         onChange={(e) => setSelectedModel(e.target.value)}
                         >
-                            {availableProviders.find(p => p.name === selectedProvider)?.models.map((m: string) => (
+                            {(dynamicModels[selectedProvider] || availableProviders.find(p => p.name === selectedProvider)?.models)?.map((m: string) => (
                                 <option key={m} value={m} className="bg-surface">{m}</option>
                             ))}
-                            {(!availableProviders.find(p => p.name === selectedProvider)?.models) && <option value="gemini-2.5-flash">Default</option>}
+                            {(!(dynamicModels[selectedProvider] || availableProviders.find(p => p.name === selectedProvider)?.models)) && <option value="gemini-2.5-flash">Default</option>}
                         </select>
                     </div>
                     </>
