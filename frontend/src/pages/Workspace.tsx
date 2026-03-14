@@ -107,7 +107,7 @@ const Workspace = () => {
     localStorage.getItem('mcp_last_provider') || 'gemini'
   );
   const [selectedModel, setSelectedModel] = useState<string>(
-    localStorage.getItem('mcp_last_model') || 'gemini-2.5-flash'
+    localStorage.getItem('mcp_last_model') || 'gemini-2.0-flash'
   );
   const [dynamicModels, setDynamicModels] = useState<Record<string, string[]>>({});
 
@@ -763,7 +763,7 @@ const Workspace = () => {
                             {(dynamicModels[selectedProvider] || availableProviders.find(p => p.name === selectedProvider)?.models)?.map((m: string) => (
                                 <option key={m} value={m} className="bg-surface">{m}</option>
                             ))}
-                            {(!(dynamicModels[selectedProvider] || availableProviders.find(p => p.name === selectedProvider)?.models)) && <option value="gemini-2.5-flash">Default</option>}
+                            {(!(dynamicModels[selectedProvider] || availableProviders.find(p => p.name === selectedProvider)?.models)) && <option value="gemini-2.0-flash">Default</option>}
                         </select>
                     </div>
                     </>

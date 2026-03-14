@@ -30,7 +30,7 @@ func (p *Provider) Name() string {
 
 func (p *Provider) AvailableModels() []string {
 	return []string{
-		"gemini-2.5-flash",
+		"gemini-2.0-flash",
 		"gemini-1.5-flash",
 		"gemini-1.5-pro",
 		"gemini-1.0-pro",
@@ -41,7 +41,7 @@ func (p *Provider) DefaultModel() string {
 	if p.model != "" {
 		return p.model
 	}
-	return "gemini-2.5-flash"
+	return "gemini-2.0-flash"
 }
 
 func (p *Provider) IsConfigured() bool {
