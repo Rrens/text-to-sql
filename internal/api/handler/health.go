@@ -44,7 +44,7 @@ func ListLLMProviders(cfg *config.Config) http.HandlerFunc {
 			},
 			{
 				"name":       "gemini",
-				"models":     []string{"gemini-2.0-flash", "gemini-2.0-pro-exp-02-05", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0-pro"},
+				"models":     []string{"gemini-2.5-flash", "gemini-2.5-pro", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0-pro"},
 				"default":    cfg.LLM.DefaultProvider == "gemini",
 				"configured": cfg.LLM.Gemini.APIKey != "",
 			},
