@@ -107,7 +107,7 @@ const Workspace = () => {
     localStorage.getItem('mcp_last_provider') || 'gemini'
   );
   const [selectedModel, setSelectedModel] = useState<string>(
-    localStorage.getItem('mcp_last_model') || 'gemini-2.0-flash'
+    localStorage.getItem('mcp_last_model') || 'gemini-2.5-flash'
   );
   const [dynamicModels, setDynamicModels] = useState<Record<string, string[]>>({});
 
@@ -763,7 +763,7 @@ const Workspace = () => {
                             {(dynamicModels[selectedProvider] || availableProviders.find(p => p.name === selectedProvider)?.models)?.map((m: string) => (
                                 <option key={m} value={m} className="bg-surface">{m}</option>
                             ))}
-                            {(!(dynamicModels[selectedProvider] || availableProviders.find(p => p.name === selectedProvider)?.models)) && <option value="gemini-2.0-flash">Default</option>}
+                            {(!(dynamicModels[selectedProvider] || availableProviders.find(p => p.name === selectedProvider)?.models)) && <option value="gemini-2.5-flash">Default</option>}
                         </select>
                     </div>
                     </>
@@ -1026,17 +1026,51 @@ const Workspace = () => {
                                 </button>
                             </form>
                             
-                            {/* Mobile Connection/Model Info */}
+                            {/* Mobile Connection/Model Info - Interactive Selection */}
                             <div className="lg:hidden mt-3 flex flex-wrap gap-2 justify-center">
-                                <div className="flex items-center gap-1 text-[10px] bg-black/20 px-2 py-1 rounded text-gray-400 border border-white/5">
-                                    <Database className="w-3 h-3" />
-                                    <span className="truncate max-w-[80px]">
-                                        {connections.find(c => c.id === selectedConnection)?.name || 'No DB'}
-                                    </span>
+                                {/* Mobile Connection Select */}
+                                <div className="flex items-center gap-1 text-[10px] bg-black/40 px-2 py-1 rounded text-gray-300 border border-white/10 hover:border-primary/50 transition-colors">
+                                    <Database className="w-3 h-3 text-primary" />
+                                    <select 
+                                        className="bg-transparent text-[10px] border-none focus:ring-0 text-gray-300 outline-none max-w-[80px] cursor-pointer appearance-none p-0 leading-none"
+                                        value={selectedConnection}
+                                        onChange={(e) => setSelectedConnection(e.target.value)}
+                                    >
+                                        {connections.map(c => (
+                                            <option key={c.id} value={c.id} className="bg-surface text-sm">{c.name}</option>
+                                        ))}
+                                        {connections.length === 0 && <option value="">No DB</option>}
+                                    </select>
                                 </div>
-                                <div className="flex items-center gap-1 text-[10px] bg-black/20 px-2 py-1 rounded text-gray-400 border border-white/5">
+
+                                {/* Mobile Provider Select */}
+                                <div className="flex items-center gap-1 text-[10px] bg-black/40 px-2 py-1 rounded text-gray-300 border border-white/10 hover:border-accent/50 transition-colors">
+                                    <Bot className="w-3 h-3 text-accent" />
+                                    <select 
+                                        className="bg-transparent text-[10px] border-none focus:ring-0 text-gray-300 outline-none max-w-[60px] cursor-pointer appearance-none p-0 leading-none"
+                                        value={selectedProvider}
+                                        onChange={(e) => setSelectedProvider(e.target.value)}
+                                    >
+                                        {availableProviders.map(p => (
+                                            <option key={p.name} value={p.name} className="bg-surface text-sm">{p.name}</option>
+                                        ))}
+                                        {availableProviders.length === 0 && <option value="gemini">gemini</option>}
+                                    </select>
+                                </div>
+
+                                {/* Mobile Model Select */}
+                                <div className="flex items-center gap-1 text-[10px] bg-black/40 px-2 py-1 rounded text-gray-300 border border-white/10 hover:border-purple-400/50 transition-colors">
                                     <Sparkles className="w-3 h-3 text-purple-400" />
-                                    <span className="truncate max-w-[80px]">{selectedModel}</span>
+                                    <select 
+                                        className="bg-transparent text-[10px] border-none focus:ring-0 text-gray-300 outline-none max-w-[80px] cursor-pointer appearance-none p-0 leading-none"
+                                        value={selectedModel}
+                                        onChange={(e) => setSelectedModel(e.target.value)}
+                                    >
+                                        {(dynamicModels[selectedProvider] || availableProviders.find(p => p.name === selectedProvider)?.models)?.map((m: string) => (
+                                            <option key={m} value={m} className="bg-surface text-sm">{m}</option>
+                                        ))}
+                                        {(!(dynamicModels[selectedProvider] || availableProviders.find(p => p.name === selectedProvider)?.models)) && <option value="gemini-2.0-flash">Default</option>}
+                                    </select>
                                 </div>
                             </div>
 
